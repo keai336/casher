@@ -62,10 +62,10 @@ func TestGroups(t *testing.T) {
 			}
 		}
 	}
-	if message, err := GetGroupMessage("sxixi"); err != nil {
+	if message, err := GetGroupMessage("EMBY"); err != nil {
 		t.Log(11)
 	} else {
-		t.Log(message)
+		t.Log(message.All)
 	}
 }
 
