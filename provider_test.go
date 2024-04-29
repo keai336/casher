@@ -14,8 +14,8 @@ type Info struct {
 	Expire int `json:"Expire"`
 }
 type Provider struct {
-	Proxies      []clash.Proxy `json:"proxies"`
-	Name         string        `json:"name"`
+	Proxies      []*clash.Proxy `json:"proxies"`
+	Name         string         `json:"name"`
 	Info         `json:"subscriptionInfo"`
 	TotalUsed    int
 	Left         int
