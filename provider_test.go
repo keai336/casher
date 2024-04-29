@@ -20,6 +20,7 @@ type Provider struct {
 	TotalUsed    int
 	Left         int
 	LastTestTime string `json:"updatedAt"`
+	VehicleType  string `json:"vehicleType"`
 }
 
 func (provider *Provider) Show(i int) string {
@@ -37,14 +38,14 @@ func (provider *Provider) Show(i int) string {
 
 func GetProviders() (map[string]*Provider, error) {
 	container := struct {
-		providers map[string]*Provider `json:"providers"`
+		Providers map[string]*Provider `json:"providers"`
 	}{}
 	err := clash.UnmarshalRequest("get", "/providers/proxies", nil, nil, &container)
 	if err != nil {
 		return nil, errors.Trace(err)
 	}
 
-	return container.providers, nil
+	return container.Providers, nil
 }
 
 func GetProviderMessage(name string) (*Provider, error) {
@@ -83,7 +84,7 @@ func TestProvider(t *testing.T) {
 		} else {
 			t.Log(providers)
 			for k, v := range providers {
-				t.Logf("%s: 1%s", k, v.LastTestTime)
+				t.Logf("%s: %s", k, v.VehicleType)
 
 			}
 		}
