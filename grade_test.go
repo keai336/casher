@@ -27,7 +27,7 @@ func (gradeprovider *GradeProvider) InitProxies() map[string]*GradeProxy {
 	gradeproxies := make(map[string]*GradeProxy)
 	for _, v := range proxies {
 		gradeproxy := NewGradeProxy(v)
-		gradeproxy.Provider = gradeprovider.Name
+		gradeproxy.Provider = gradeprovider
 		gradeproxies[v.Name] = gradeproxy
 
 	}
@@ -43,7 +43,7 @@ type GradeGroup struct {
 type GradeProxy struct {
 	*clash.Proxy
 	Level    int
-	Provider string
+	Provider *GradeProvider
 }
 
 func NewGradeProxy(proxy *clash.Proxy) *GradeProxy {
@@ -56,13 +56,11 @@ func NewGradeProxy(proxy *clash.Proxy) *GradeProxy {
 func TestGradeprovider(t *testing.T) {
 	clash.SetURL("http://10.18.18.31:9090")
 	clash.SetSecret("D1u5ETt5")
-	delay := GetALLDelayNow()
 	gradeprovider := NewGradeProvider("mesl", 1)
 
 	for k, v := range gradeprovider.InitProxies() {
 
-		t.Log(k, v.Provider, v.History[1])
+		t.Log(k, v.Provider.Name, v.Level, v.Provider.ShowFlow(v.Provider.Left))
 
 	}
-	t.Log(delay)
 }
