@@ -70,7 +70,7 @@ func (provider *Provider) LeftTime() string {
 	seconds := int(duration.Seconds()) % 60
 
 	// 输出格式化后的时间差
-	return fmt.Sprintf("时间差：%d天 %d小时 %d分钟 %d秒\n", days, hours, minutes, seconds)
+	return fmt.Sprintf("倒计时：%d天 %d小时 %d分钟 %d秒\n", days, hours, minutes, seconds)
 }
 func GetProviders() (map[string]*Provider, error) {
 	container := struct {
