@@ -7,4 +7,9 @@ require (
 	github.com/obgnail/clash-api v0.0.0-20240403131721-a9bb8f147312
 )
 
-require github.com/rogpeppe/go-internal v1.12.0 // indirect
+require (
+	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/go-sql-driver/mysql v1.8.1 // indirect
+	github.com/jmoiron/sqlx v1.4.0 // indirect
+	github.com/rogpeppe/go-internal v1.12.0 // indirect
+)
