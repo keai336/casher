@@ -104,7 +104,61 @@ func (gradeprovider *GradeProvider) UpDate() {
 type GradeGroup struct {
 	*Group
 	Level    int
-	LabelDic map[string]int
+	LabelDic map[string]float64
+	Points   map[string]int
+	Block    time.Time
+}
+
+func NewGradeGroup(name string, level int) *GradeGroup {
+	gradegroup := new(GradeGroup)
+	group, err := GetGroupMessage(name)
+	pdic := make(map[string]int)
+	ldic := make(map[string]float64)
+	if err != nil {
+		panic("wrong get group message")
+	}
+	gradegroup.Group = group
+	gradegroup.Level = level
+	gradegroup.Points = pdic
+	gradegroup.LabelDic = ldic
+	return gradegroup
+}
+
+func (gradegroup *GradeGroup) Update() {
+	gradegroup.Group, _ = GetGroupMessage(gradegroup.Name)
+}
+func (gradegroup *GradeGroup) SetLabelDic(label string, value float64) {
+	gradegroup.LabelDic[label] = value
+
+}
+func checkmark(gradeproxy *GradeProxy, gradegroup *GradeGroup) float64 {
+	marks := gradeproxy.Mark
+	labeldic := gradegroup.LabelDic
+	p := 0.0
+	n := 0
+	for _, v := range marks {
+		if value, ok := labeldic[v]; ok {
+			p += value
+			n += 1
+
+		}
+	}
+	if n == 0 {
+		return 1
+	}
+	return p / float64(n)
+}
+func (gradegroup *GradeGroup) GiveScore(gradproxies map[string]*GradeProxy) {
+	for _, name := range gradegroup.All {
+
+		gradeproxy, ok := gradproxies[name]
+		if ok {
+			priority := checkmark(gradeproxy, gradegroup)
+			gradegroup.Points[name] = int(float64(gradeproxy.Point) * priority)
+
+		}
+
+	}
 }
 
 type GradeProxy struct {
@@ -123,7 +177,8 @@ func (gradeproxy *GradeProxy) SetMark(mark string) {
 func (gradeproxy *GradeProxy) Update() {
 	delay, _ := GeneralDelayTest(gradeproxy.Name)
 	gradeproxy.DelayNow = delay.Delay
-	gradeproxy.DelayHistory = append(gradeproxy.DelayHistory, gradeproxy.DelayNow)
+	//gradeproxy.DelayHistory = append(gradeproxy.DelayHistory, gradeproxy.DelayNow)
+	OneInsertHistory(gradeproxy)
 }
 func NewGradeProxy(proxy *clash.Proxy) *GradeProxy {
 	gradeproxy := new(GradeProxy)
@@ -141,10 +196,21 @@ func TestGradeprovider(t *testing.T) {
 	clash.SetSecret("D1u5ETt5")
 	gradeprovider := NewGradeProvider("mesl", 1)
 	gradeproxies := gradeprovider.GradeProxies
+	groups, _ := GetGroups()
+	gradegroups := make(map[string]*GradeGroup)
+	for k, _ := range groups {
+		gradegroups[k] = NewGradeGroup(k, 1)
+	}
+
 	for {
 		gradeprovider.UpDate()
+		for _, v := range gradegroups {
+			v.Update()
+			v.GiveScore(gradeproxies)
+			fmt.Println(v.Name, v.Points[v.Now])
+		}
 		for k, v := range gradeproxies {
-			fmt.Println(k, v.Point, v.DelayHistory)
+			fmt.Println(k, v.Point)
 		}
 		time.Sleep(90 * time.Second)
 	}
