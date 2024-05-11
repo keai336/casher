@@ -27,7 +27,9 @@ func GetGroups() (map[string]*Group, error) {
 	}
 	fi_map := make(map[string]*Group)
 	for _, v := range container.Groups {
-		fi_map[v.Name] = v
+		if v.Type == "Selector" {
+			fi_map[v.Name] = v
+		}
 	}
 
 	return fi_map, nil
@@ -47,6 +49,7 @@ func TestGroups(t *testing.T) {
 	clash.SetURL("http://10.18.18.31:9090")
 	clash.SetSecret("D1u5ETt5")
 	Groups, err := GetGroups()
+	fmt.Println(Groups)
 	if err != nil {
 		fmt.Println(err)
 
