@@ -1,4 +1,4 @@
-package main
+package grade
 
 import (
 	"fmt"
@@ -26,11 +26,11 @@ func OneInsertHistory(proxy *GradeProxy) {
 		fmt.Println("exec failed, ", err)
 		return
 	}
-	id, err := r.LastInsertId()
+	_, err = r.LastInsertId()
 	if err != nil {
 		fmt.Println("exec failed, ", err)
 		return
 	}
 
-	fmt.Println("insert succ:", id)
+	//fmt.Println("insert succ:", id)
 }

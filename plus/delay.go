@@ -1,4 +1,4 @@
-package main
+package plus
 
 import (
 	"github.com/obgnail/clash-api/clash"

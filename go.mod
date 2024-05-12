@@ -12,4 +12,5 @@ require (
 	github.com/go-sql-driver/mysql v1.8.1 // indirect
 	github.com/jmoiron/sqlx v1.4.0 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
