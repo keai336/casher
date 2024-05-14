@@ -1,13 +1,13 @@
 package grade
 
 import (
+	"dash/config"
 	"dash/plus"
 	"fmt"
 	"github.com/obgnail/clash-api/clash"
 	"regexp"
 	"strings"
 	"sync"
-	"testing"
 	"time"
 )
 
@@ -25,7 +25,7 @@ func GetLocationMarkReMap() map[string]*regexp.Regexp {
 	return finalmap
 }
 
-var LocationMap map[string]*regexp.Regexp = GetLocationMarkReMap()
+var LocationMap = GetLocationMarkReMap()
 
 func MarkProxy(ma map[string]*regexp.Regexp, gradeproxy *GradeProxy) {
 	for k, v := range ma {
@@ -42,7 +42,7 @@ type GradeProvider struct {
 	GradeProxies map[string]*GradeProxy
 }
 
-func NewGradeProvider(name string, level float64) *GradeProvider {
+func NewGradeProvider(name string, level float64, proxymarksdic map[string][]string) *GradeProvider {
 	gradeprovider := new(GradeProvider)
 	provider, err := plus.GetProviderMessage(name)
 	if err != nil {
@@ -50,21 +50,21 @@ func NewGradeProvider(name string, level float64) *GradeProvider {
 	}
 	gradeprovider.Provider = provider
 	gradeprovider.Level = level
-	gradeprovider.InitProxies()
+	gradeprovider.InitProxies(proxymarksdic)
 	return gradeprovider
 
 }
 
-func GetAllGradeProviders(providerleveldic map[string]float64) map[string]*GradeProvider {
+func GetAllGradeProviders(providerleveldic map[string]float64, proxymarksdic map[string][]string) map[string]*GradeProvider {
 	providers := make(map[string]*GradeProvider)
 	if providerss, err := plus.GetProviders(); err != nil {
 		panic(err)
 	} else {
-		for k, _ := range providerss {
+		for k := range providerss {
 			if v, ok := providerleveldic[k]; ok {
-				providers[k] = NewGradeProvider(k, float64(v))
+				providers[k] = NewGradeProvider(k, float64(v), proxymarksdic)
 			} else {
-				providers[k] = NewGradeProvider(k, 1)
+				providers[k] = NewGradeProvider(k, 1, proxymarksdic)
 
 			}
 
@@ -73,7 +73,7 @@ func GetAllGradeProviders(providerleveldic map[string]float64) map[string]*Grade
 	return providers
 }
 
-func (gradeprovider *GradeProvider) InitProxies() {
+func (gradeprovider *GradeProvider) InitProxies(proxiesmarksdic map[string][]string) {
 	proxies := gradeprovider.Proxies
 	gradeproxies := make(map[string]*GradeProxy)
 	var lock sync.Mutex
@@ -83,7 +83,7 @@ func (gradeprovider *GradeProvider) InitProxies() {
 		go func(v *clash.Proxy) {
 			defer wait.Done()
 			defer lock.Unlock()
-			gradeproxy := NewGradeProxy(v)
+			gradeproxy := NewGradeProxy(v, proxiesmarksdic[v.Name])
 			gradeproxy.Provider = gradeprovider
 			lock.Lock()
 			gradeproxies[v.Name] = gradeproxy
@@ -96,7 +96,7 @@ func (gradeprovider *GradeProvider) InitProxies() {
 func (gradeprovider *GradeProvider) GiveScore(gradeproxy *GradeProxy) {
 	delaypoint := 0
 	if gradeproxy.DelayNow != 0 {
-		delaypoint = int(10 * 1500 / gradeproxy.DelayNow)
+		delaypoint = 10 * 1500 / gradeproxy.DelayNow
 	}
 	mark := gradeprovider.Level * gradeproxy.Level * float64(delaypoint)
 	gradeproxy.Point = int(mark)
@@ -126,22 +126,26 @@ type GradeGroup struct {
 	LabelDic map[string]float64
 	Points   map[string]int
 	Block    time.Time
-	Source   map[string]*map[string]*GradeProxy
+	Source   map[string]map[string]*GradeProxy
 }
 
-func NewGradeGroup(name string, level float64, source map[string]*map[string]*GradeProxy) *GradeGroup {
+func NewGradeGroup(name string, level float64, labledic map[string]float64, source map[string]map[string]*GradeProxy) *GradeGroup {
 	gradegroup := new(GradeGroup)
 	group, err := plus.GetGroupMessage(name)
-	pdic := make(map[string]int)
-	ldic := make(map[string]float64)
 	if err != nil {
 		panic("wrong get group message")
+	}
+	pdic := make(map[string]int)
+	ldic := make(map[string]float64)
+	if labledic != nil {
+		ldic = labledic
 	}
 	gradegroup.Group = group
 	gradegroup.Level = level
 	gradegroup.Points = pdic
 	gradegroup.LabelDic = ldic
 	gradegroup.Source = source
+	gradegroup.LabelDic = labledic
 	return gradegroup
 }
 
@@ -169,7 +173,7 @@ func checkmark(gradeproxy *GradeProxy, gradegroup *GradeGroup) float64 {
 func (gradegroup *GradeGroup) GiveScore() {
 	allgradeproxies := make(map[string]*GradeProxy)
 	for _, innerMap := range gradegroup.Source {
-		for key, value := range *innerMap {
+		for key, value := range innerMap {
 			allgradeproxies[key] = value
 		}
 	}
@@ -185,15 +189,15 @@ func (gradegroup *GradeGroup) GiveScore() {
 
 	}
 }
-func (gradgroup *GradeGroup) ChangeIf() {
-	if !gradgroup.Block.After(time.Now()) {
+func (gradegroup *GradeGroup) ChangeIf() {
+	if !gradegroup.Block.After(time.Now()) {
 		//fmt.Println(gradgroup.Name, "可更改")
-		nowuse := gradgroup.Now
-		nowpoint := gradgroup.Points[nowuse]
-		name, value := maxInMap(gradgroup.Points)
+		nowuse := gradegroup.Now
+		nowpoint := gradegroup.Points[nowuse]
+		name, value := maxInMap(gradegroup.Points)
 		if value > int(float64(nowpoint)*1.2) {
-			clash.SwitchProxy(gradgroup.Name, name)
-			fmt.Printf("%s old:%s-%d --> new:%s-%d ", gradgroup.Name, nowuse, nowpoint, name, value)
+			clash.SwitchProxy(gradegroup.Name, name)
+			fmt.Printf("%s old:%s-%d --> new:%s-%d ", gradegroup.Name, nowuse, nowpoint, name, value)
 		} else {
 			//fmt.Println(gradgroup.Name, nowuse, "is best: ", nowpoint)
 		}
@@ -218,7 +222,20 @@ type GradeProxy struct {
 }
 
 func (gradeproxy *GradeProxy) SetMark(mark string) {
-	gradeproxy.Mark = append(gradeproxy.Mark, mark)
+	containif := func(slice []string, str string) bool {
+		for _, s := range slice {
+			if s == str {
+				return true
+			}
+		}
+		return false
+	}
+	if !containif(gradeproxy.Mark, mark) {
+		gradeproxy.Mark = append(gradeproxy.Mark, mark)
+		return
+	}
+	fmt.Printf("The marker %s already exists", mark)
+
 }
 func (gradeproxy *GradeProxy) Update() {
 	delay, _ := plus.GeneralDelayTest(gradeproxy.Name)
@@ -226,14 +243,19 @@ func (gradeproxy *GradeProxy) Update() {
 	//gradeproxy.DelayHistory = append(gradeproxy.DelayHistory, gradeproxy.DelayNow)
 	OneInsertHistory(gradeproxy)
 }
-func NewGradeProxy(proxy *clash.Proxy) *GradeProxy {
+func NewGradeProxy(proxy *clash.Proxy, marks []string) *GradeProxy {
 	gradeproxy := new(GradeProxy)
 	gradeproxy.Proxy = proxy
 	gradeproxy.Level = 1
 	delay, _ := plus.GeneralDelayTest(gradeproxy.Name)
 	gradeproxy.DelayNow = delay.Delay
 	gradeproxy.DelayHistory = append(gradeproxy.DelayHistory, gradeproxy.DelayNow)
-	MarkProxy(LocationMap, gradeproxy)
+	if marks == nil {
+		MarkProxy(LocationMap, gradeproxy)
+
+	} else {
+		gradeproxy.Mark = marks
+	}
 	return gradeproxy
 }
 
@@ -250,23 +272,23 @@ func maxInMap(m map[string]int) (string, int) {
 	}
 	return maxKey, maxValue
 }
-func InitSource(gradeproviders map[string]*GradeProvider) map[string]*map[string]*GradeProxy {
-	source := make(map[string]*map[string]*GradeProxy)
+func InitSource(gradeproviders map[string]*GradeProvider) map[string]map[string]*GradeProxy {
+	source := make(map[string]map[string]*GradeProxy)
 	for k, v := range gradeproviders {
-		source[k] = &v.GradeProxies
+		source[k] = v.GradeProxies
 
 	}
 	return source
 }
-func InitGradeGroup(grouplevel map[string]float64, source map[string]*map[string]*GradeProxy) map[string]*GradeGroup {
+func InitGradeGroup(grouplevel map[string]float64, grouplabeldic map[string]map[string]float64, source map[string]map[string]*GradeProxy) map[string]*GradeGroup {
 	groups, _ := plus.GetGroups()
 	gradegroups := make(map[string]*GradeGroup)
 
-	for k, _ := range groups {
+	for k := range groups {
 		if v, ok := grouplevel[k]; ok {
-			gradegroups[k] = NewGradeGroup(k, v, source)
+			gradegroups[k] = NewGradeGroup(k, v, grouplabeldic[k], source)
 		} else {
-			gradegroups[k] = NewGradeGroup(k, 1, source)
+			gradegroups[k] = NewGradeGroup(k, 1, grouplabeldic[k], source)
 		}
 	}
 	return gradegroups
@@ -291,58 +313,60 @@ func AllUpdate(all interface{}) {
 		for _, proxy := range v {
 			proxy.Update()
 		}
+	case config.Config:
+
 	default:
 		fmt.Println("Unsupported type")
 	}
 }
 
-func TestGradeprovider(t *testing.T) {
-	clash.SetURL("http://10.18.18.31:9090")
-	clash.SetSecret("D1u5ETt5")
-	providerdic := map[string]float64{"mesl": 2}
-	gradeproviders := GetAllGradeProviders(providerdic)
-	fmt.Println(gradeproviders)
-	//gradeprovider := NewGradeProvider("mesl", 1)
-	//gradeproxies := gradeprovider.GradeProxies
-	//source := make(map[string]*map[string]*GradeProxy)
-	//source[gradeprovider.Name] = &gradeprovider.GradeProxies
-	source := InitSource(gradeproviders)
-	//groups, _ := GetGroups()
-	//gradegroups := make(map[string]*GradeGroup)
-	//
-	//for k, _ := range groups {
-	//	gradegroups[k] = NewGradeGroup(k, 1, source)
-	//}
-	groupdic := make(map[string]float64)
-	gradegroups := InitGradeGroup(groupdic, source)
-	fmt.Println(gradegroups)
-	var one *GradeProxy
-	one = (*source["mesl"])["🇨🇳 TW1 Hinet [0.2X]"]
-	go func() {
-		for {
-			AllUpdate(gradeproviders)
-			AllUpdate(gradegroups)
-			one = (*source["mesl"])["🇨🇳 TW1 Hinet [0.2X]"]
-			fmt.Println(one.Name, one.Mark, one.Point, one.DelayHistory)
-			//gradeprovider.Update()
-			//for _, v := range gradegroups {
-			//	v.SetLabelDic("香港", 2.5)
-			//	v.Update()
-			//	name, point := maxInMap(v.Points)
-			//	fmt.Println(v.Name, name, point)
-			//	//fmt.Println(v.Source)
-			time.Sleep(5 * time.Second)
-		}
-
-	}()
-	marks := []string{"1", "2", "3"}
-
-	for _, v := range marks {
-		one.SetMark(v)
-		time.Sleep(5 * time.Second)
-
-	}
-	//for k, v := range gradeproxies {
-	//	fmt.Println(k, v.Point)
-	//}
-}
+//func TestGradeprovider(t *testing.T) {
+//	clash.SetURL("http://10.18.18.31:9090")
+//	clash.SetSecret("D1u5ETt5")
+//	providerdic := map[string]float64{"mesl": 2}
+//	gradeproviders := GetAllGradeProviders(providerdic)
+//	fmt.Println(gradeproviders)
+//	//gradeprovider := NewGradeProvider("mesl", 1)
+//	//gradeproxies := gradeprovider.GradeProxies
+//	//source := make(map[string]*map[string]*GradeProxy)
+//	//source[gradeprovider.Name] = &gradeprovider.GradeProxies
+//	source := InitSource(gradeproviders)
+//	//groups, _ := GetGroups()
+//	//gradegroups := make(map[string]*GradeGroup)
+//	//
+//	//for k, _ := range groups {
+//	//	gradegroups[k] = NewGradeGroup(k, 1, source)
+//	//}
+//	groupdic := make(map[string]float64)
+//	gradegroups := InitGradeGroup(groupdic, source)
+//	fmt.Println(gradegroups)
+//	var one *GradeProxy
+//	one = source["mesl"]["🇨🇳 TW1 Hinet [0.2X]"]
+//	go func() {
+//		for {
+//			AllUpdate(gradeproviders)
+//			AllUpdate(gradegroups)
+//			one = source["mesl"]["🇨🇳 TW1 Hinet [0.2X]"]
+//			fmt.Println(one.Name, one.Mark, one.Point, one.DelayHistory)
+//			//gradeprovider.Update()
+//			//for _, v := range gradegroups {
+//			//	v.SetLabelDic("香港", 2.5)
+//			//	v.Update()
+//			//	name, point := maxInMap(v.Points)
+//			//	fmt.Println(v.Name, name, point)
+//			//	//fmt.Println(v.Source)
+//			time.Sleep(5 * time.Second)
+//		}
+//
+//	}()
+//	marks := []string{"1", "2", "3"}
+//
+//	for _, v := range marks {
+//		one.SetMark(v)
+//		time.Sleep(5 * time.Second)
+//
+//	}
+//	//for k, v := range gradeproxies {
+//	//	fmt.Println(k, v.Point)
+//	//}
+//}

@@ -2,38 +2,25 @@ package config
 
 import (
 	"bufio"
-	"fmt"
-	"github.com/obgnail/clash-api/clash"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"log"
 	"os"
-	"testing"
 )
 
-// var GradeProviders map[string]*GradeProvider
-// var Source map[string]map[string]*map[string]*GradeProxy
-// var GradeGroups map[string]*GradeGroup
-var Configs *Config
-
-func init() {
-	clash.SetURL("http://10.18.18.31:9090")
-	clash.SetSecret("D1u5ETt5")
-	Configs = LoadConfig("test.yaml")
-
-}
-
 type Config struct {
-	ProviderLevel map[string]float64  `yaml:"providerlevel"`
-	GroupLabelDic map[string]float64  `yaml:"grouplabeldic"`
-	ProxyMark     map[string][]string `yaml:"proxymark"`
+	ProviderLevel map[string]float64            `yaml:"providerlevel"`
+	GroupLabelDic map[string]map[string]float64 `yaml:"grouplabeldic"`
+	ProxyMark     map[string][]string           `yaml:"proxymark"`
+	GroupLevelDic map[string]float64            `yaml:"groupleveldic"`
 }
 
-func NewConfig(provider map[string]float64, group map[string]float64, proxy map[string][]string) *Config {
+func NewConfig(provider map[string]float64, group map[string]map[string]float64, proxy map[string][]string, grouplevel map[string]float64) *Config {
 	config := new(Config)
 	config.ProviderLevel = provider
 	config.GroupLabelDic = group
 	config.ProxyMark = proxy
+	config.GroupLevelDic = grouplevel
 	return config
 }
 
@@ -44,13 +31,16 @@ func LoadConfig(path string) *Config {
 	if err != nil {
 		log.Fatal(err)
 	}
-	yaml.Unmarshal(content, config)
+	if err := yaml.Unmarshal(content, config); err != nil {
+		log.Fatal("load err", err)
+	}
 	return config
 }
+
 func DumpConfig(config *Config, path string) {
 	v, err := yaml.Marshal(&config)
-	if err == nil {
-		fmt.Println(string(v))
+	if err != nil {
+		log.Fatal("marshal err", err)
 	}
 	file, _ := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0664)
 
@@ -60,18 +50,12 @@ func DumpConfig(config *Config, path string) {
 	writer := bufio.NewWriter(file)
 
 	// 写入字符串
-	writer.Write(v)
+	if _, err = writer.Write(v); err != nil {
+		log.Fatal("write err", err)
+	}
 
 	// 清空缓存 确保写入磁盘
-	writer.Flush()
-}
-
-func TestRef(t *testing.T) {
-	providerleveldic := map[string]float64{"mesl": 1, "planc": 2.3}
-	grouplabeldic := map[string]float64{"final": 1, "hk": 2.3}
-	proxymark := map[string][]string{"final": []string{"hk", "openai"}}
-	config := NewConfig(providerleveldic, grouplabeldic, proxymark)
-	//DumpConfig(config, "test.yaml")
-	config = LoadConfig("test.yaml")
-	fmt.Println(config)
+	if err = writer.Flush(); err != nil {
+		log.Fatal("wrong flush", err)
+	}
 }
