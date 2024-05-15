@@ -2,6 +2,7 @@ package config
 
 import (
 	"bufio"
+	"fmt"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"log"
@@ -13,6 +14,7 @@ type Config struct {
 	GroupLabelDic map[string]map[string]float64 `yaml:"grouplabeldic"`
 	ProxyMark     map[string][]string           `yaml:"proxymark"`
 	GroupLevelDic map[string]float64            `yaml:"groupleveldic"`
+	Interval      int                           `yaml:"interval"`
 }
 
 func NewConfig(provider map[string]float64, group map[string]map[string]float64, proxy map[string][]string, grouplevel map[string]float64) *Config {
@@ -33,6 +35,10 @@ func LoadConfig(path string) *Config {
 	}
 	if err := yaml.Unmarshal(content, config); err != nil {
 		log.Fatal("load err", err)
+	}
+	if config.Interval == 0 {
+		config.Interval = 180
+		fmt.Println("no config for interval,use default 180")
 	}
 	return config
 }
