@@ -10,7 +10,7 @@ import (
 type Casher struct {
 	Providers map[string]*grade.GradeProvider
 	Groups    map[string]*grade.GradeGroup
-	Source    map[string]map[string]*grade.GradeProxy
+	Source    map[string]*grade.GradeProxy
 	*config.Config
 	ConfigPath string
 }
@@ -90,22 +90,17 @@ func (casher *Casher) OffDuty() {
 	}
 	removeEmptyValues(casher.GroupLevelDic)
 	removeEmptyValues(casher.GroupLabelDic)
-	for _, k := range casher.Source {
-		for _, proxy := range k {
-			casher.ProxyMark[proxy.Name] = removeDuplicates(proxy.Mark)
-		}
+	for _, proxy := range casher.Source {
+		casher.ProxyMark[proxy.Name] = removeDuplicates(proxy.Mark)
 	}
 	removeEmptyValues(casher.ProxyMark)
 	config.DumpConfig(casher.Config, casher.ConfigPath)
 }
 
 func (casher *Casher) SetProxyMark(proxyname string, mark string) {
-	for _, proxiesmap := range casher.Source {
-		if proxy, ok := proxiesmap[proxyname]; ok {
-			proxy.SetMark(mark)
-			return
-
-		}
+	if proxy, ok := casher.Source[proxyname]; ok {
+		proxy.SetMark(mark)
+		return
 	}
 	fmt.Println("no proxy named", proxyname)
 }
@@ -126,12 +121,10 @@ func (casher *Casher) DelProxyMark(proxyname string, mark string) {
 		return slice
 	}
 
-	for _, proxiesmap := range casher.Source {
-		if proxy, ok := proxiesmap[proxyname]; ok {
-			proxy.Mark = removeValue(proxy.Mark, mark)
-		}
-		return
-
+	if proxy, ok := casher.Source[proxyname]; ok {
+		proxy.Mark = removeValue(proxy.Mark, mark)
 	}
+	return
+
 	fmt.Println("no proxy named", proxyname)
 }
