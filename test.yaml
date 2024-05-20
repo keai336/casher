@@ -1,3 +1,5 @@
+interval: 300
+timeout: 1200
 providerlevel:
     mesl: 1
     planb: 1

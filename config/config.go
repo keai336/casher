@@ -15,6 +15,7 @@ type Config struct {
 	ProxyMark     map[string][]string           `yaml:"proxymark"`
 	GroupLevelDic map[string]float64            `yaml:"groupleveldic"`
 	Interval      int                           `yaml:"interval"`
+	TimeOut       int                           `yaml:"timeout"`
 }
 
 func NewConfig(provider map[string]float64, group map[string]map[string]float64, proxy map[string][]string, grouplevel map[string]float64) *Config {
@@ -39,6 +40,10 @@ func LoadConfig(path string) *Config {
 	if config.Interval == 0 {
 		config.Interval = 180
 		fmt.Println("no config for interval,use default 180")
+	}
+	if config.TimeOut == 0 {
+		config.TimeOut = 1500
+		fmt.Println("no config for timeout,use default 1500")
 	}
 	return config
 }

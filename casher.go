@@ -3,6 +3,7 @@ package main
 import (
 	"dash/config"
 	"dash/grade"
+	"dash/plus"
 	"fmt"
 	"github.com/obgnail/clash-api/clash"
 )
@@ -19,6 +20,7 @@ func (casher *Casher) Init() {
 	casher.Providers = grade.GetAllGradeProviders(casher.ProviderLevel, casher.ProxyMark)
 	casher.Source = grade.InitSource(casher.Providers)
 	casher.Groups = grade.InitGradeGroup(casher.GroupLevelDic, casher.GroupLabelDic, casher.Source)
+	plus.TimeOut = casher.TimeOut
 }
 func NewOneCasher(configpt string) *Casher {
 	casher := new(Casher)
