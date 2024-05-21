@@ -1,0 +1,517 @@
+providerlevel:
+    mesl: 1
+    planb: 1
+    planc: 1.3
+grouplabeldic:
+    Final:
+        低倍率: 2
+        飞舞结点: 0.01
+        香港: 2.3
+    美国:
+        飞舞结点: 0.01
+        高倍率: 0.5
+proxymark:
+    "\U0001F1E6\U0001F1F7 Argentina":
+        - 阿根廷
+    "\U0001F1E6\U0001F1F7 Argentina | 冷门":
+        - 阿根廷
+    "\U0001F1E6\U0001F1FA Australia1 Exetel":
+        - 澳大利亚
+    "\U0001F1E6\U0001F1FA Australia2 AWS":
+        - 澳大利亚
+    "\U0001F1E6\U0001F1FA Australia3 Oracle":
+        - 澳大利亚
+    "\U0001F1E7\U0001F1F7 Brazil":
+        - 巴西
+    "\U0001F1E8\U0001F1E6 CA1 AWS":
+        - 加拿大
+    "\U0001F1E8\U0001F1E6 CA2 Google":
+        - 加拿大
+    "\U0001F1E8\U0001F1ED Switzerland":
+        - 瑞士
+    "\U0001F1E8\U0001F1ED Switzerland | 家宽 3.0x":
+        - 高倍率
+        - 瑞士
+        - 家宽
+    "\U0001F1E8\U0001F1F1 Chile":
+        - 智利
+    "\U0001F1E8\U0001F1F3 TW1 Hinet [0.2X]":
+        - 低倍率
+        - 台湾
+    "\U0001F1E8\U0001F1F3 TW2 Cloudflare":
+        - 台湾
+    "\U0001F1E8\U0001F1F3 TW3 Akari":
+        - 台湾
+    "\U0001F1E8\U0001F1F3 TW4 TFN":
+        - 台湾
+    "\U0001F1E8\U0001F1F3 TW5 404":
+        - 台湾
+    "\U0001F1E8\U0001F1F3 TW6 PQS":
+        - 台湾
+    "\U0001F1E8\U0001F1F3 TW7 Akari [UDPN 3X]":
+        - 高倍率
+        - 台湾
+    "\U0001F1E8\U0001F1F3 TW8 TFN [UDPN 3X]":
+        - 高倍率
+        - 台湾
+    "\U0001F1E8\U0001F1F3 TW9 404 [UDPN 3X]":
+        - 高倍率
+        - 台湾
+    "\U0001F1E8\U0001F1F3 TW10 Hinet [UDPN 3X]":
+        - 高倍率
+        - 台湾
+    "\U0001F1E8\U0001F1F3 TW11 Apol [UDPN 3X]":
+        - 高倍率
+        - 台湾
+    "\U0001F1E8\U0001F1F3 TW12 PQS [UDPN 3X]":
+        - 高倍率
+        - 台湾
+    "\U0001F1E8\U0001F1F3 Taiwan | 家宽 3.0x":
+        - 高倍率
+        - 台湾
+    "\U0001F1E8\U0001F1F3 Taiwan 01":
+        - 台湾
+    "\U0001F1E8\U0001F1F4 Colombia":
+        - 哥伦比亚
+    "\U0001F1E9\U0001F1EA DE1 Misaka":
+        - 德国
+    "\U0001F1E9\U0001F1EA DE2 Cloudflare":
+        - 德国
+    "\U0001F1E9\U0001F1EA DE3 Google":
+        - 德国
+    "\U0001F1E9\U0001F1EA DE4 AWS":
+        - 德国
+    "\U0001F1E9\U0001F1F0 Denmark":
+        - 丹麦
+    "\U0001F1EA\U0001F1EC Egypt":
+        - 埃及
+    "\U0001F1EB\U0001F1EE Finland":
+        - 芬兰
+    "\U0001F1EB\U0001F1F7 FR1 Webconex":
+        - 法国
+    "\U0001F1EB\U0001F1F7 FR2 Feelb":
+        - 法国
+    "\U0001F1EB\U0001F1F7 FR3 Google":
+        - 法国
+    "\U0001F1EC\U0001F1E7 UK1 Misaka":
+        - 英国
+    "\U0001F1EC\U0001F1E7 UK2 Oracle":
+        - 英国
+    "\U0001F1EC\U0001F1E7 UK3 Cloudflare":
+        - 英国
+    "\U0001F1EC\U0001F1E7 UK4 Google":
+        - 英国
+    "\U0001F1EC\U0001F1E7 UK5 Virgin":
+        - 英国
+    "\U0001F1EC\U0001F1E7 United Kingdom | 家宽 3.0x":
+        - 高倍率
+        - 英国
+    "\U0001F1EC\U0001F1E7 United Kingdom 01":
+        - 英国
+    "\U0001F1EC\U0001F1E7 United Kingdom 02":
+        - 英国
+    "\U0001F1EC\U0001F1F7 Greece":
+        - 希腊
+    "\U0001F1ED\U0001F1F0 HK1 Dmit":
+        - 香港
+        - hksf
+    "\U0001F1ED\U0001F1F0 HK2 HKT":
+        - 香港
+    "\U0001F1ED\U0001F1F0 HK3 Gcore [0.2X]":
+        - 低倍率
+        - 香港
+    "\U0001F1ED\U0001F1F0 HK4 Dmit":
+        - 香港
+    "\U0001F1ED\U0001F1F0 HK5 Dmit":
+        - 香港
+    "\U0001F1ED\U0001F1F0 HK6 Dmit":
+        - 香港
+    "\U0001F1ED\U0001F1F0 HK7 Dmit":
+        - 香港
+    "\U0001F1ED\U0001F1F0 HK8 Jinx":
+        - 香港
+    "\U0001F1ED\U0001F1F0 HK9 Jinx":
+        - 香港
+    "\U0001F1ED\U0001F1F0 HK10 Jinx":
+        - 香港
+    "\U0001F1ED\U0001F1F0 HK11 Eons [UDPN 3X]":
+        - 高倍率
+        - 香港
+    "\U0001F1ED\U0001F1F0 HK12 Misaka [UDPN 3X]":
+        - 高倍率
+        - 香港
+    "\U0001F1ED\U0001F1F0 HK13 Jinx [UDPN 3X]":
+        - 高倍率
+        - 香港
+    "\U0001F1ED\U0001F1F0 HK14 Nearoute [UDPN 3X]":
+        - 高倍率
+        - 香港
+    "\U0001F1ED\U0001F1F0 HK15 Dmit [UDPN 3X]":
+        - 高倍率
+        - 香港
+    "\U0001F1ED\U0001F1F0 HK16 Cloudflare [UDPN 3X]":
+        - 高倍率
+        - 香港
+    "\U0001F1ED\U0001F1F0 HK17 HKT [UDPN 3X]":
+        - 高倍率
+        - 香港
+    "\U0001F1ED\U0001F1F0 HK18 Eons [UDPN 3X]":
+        - 高倍率
+        - 香港
+    "\U0001F1ED\U0001F1F0 Hong Kong | 家宽 3.0x":
+        - 高倍率
+        - 香港
+    "\U0001F1ED\U0001F1F0 Hong Kong | 日用 0.2x":
+        - 低倍率
+        - 香港
+    "\U0001F1ED\U0001F1F0 Hong Kong 01":
+        - 香港
+    "\U0001F1ED\U0001F1F0 Hong Kong 02":
+        - 香港
+    "\U0001F1ED\U0001F1F0 Hong Kong 03":
+        - 香港
+    "\U0001F1ED\U0001F1F0 Hong Kong 04":
+        - 香港
+    "\U0001F1ED\U0001F1F0 Hong Kong 05":
+        - 香港
+    "\U0001F1ED\U0001F1F0 Hong Kong 06":
+        - 香港
+    "\U0001F1ED\U0001F1F0 Hong Kong 07":
+        - 香港
+    "\U0001F1ED\U0001F1F0 Hong Kong 08":
+        - 香港
+    "\U0001F1EE\U0001F1E9 Indonesia":
+        - 印度尼西亚
+    "\U0001F1EE\U0001F1F1 Israel":
+        - 以色列
+    "\U0001F1EE\U0001F1F3 India":
+        - 印度
+    "\U0001F1EF\U0001F1F5 JP1 Gcore [0.2X]":
+        - 低倍率
+        - 日本
+    "\U0001F1EF\U0001F1F5 JP2 Akari":
+        - 日本
+    "\U0001F1EF\U0001F1F5 JP3 AWS":
+        - 萨摩亚
+    "\U0001F1EF\U0001F1F5 JP4 Akari":
+        - 日本
+    "\U0001F1EF\U0001F1F5 JP5 KDDI":
+        - 日本
+    "\U0001F1EF\U0001F1F5 JP6 SoNet":
+        - 日本
+    "\U0001F1EF\U0001F1F5 JP7 Softbank":
+        - 日本
+    "\U0001F1EF\U0001F1F5 JP8 AWS":
+        - 萨摩亚
+    "\U0001F1EF\U0001F1F5 JP9 Cloudflare":
+        - 日本
+    "\U0001F1EF\U0001F1F5 JP10 Misaka [UDPN 3X]":
+        - 高倍率
+        - 日本
+    "\U0001F1EF\U0001F1F5 JP11 Nearoute [UDPN 3X]":
+        - 高倍率
+        - 日本
+    "\U0001F1EF\U0001F1F5 JP12 KDDI [UDPN 3X]":
+        - 高倍率
+        - 日本
+    "\U0001F1EF\U0001F1F5 JP13 SoNet [UDPN 3X]":
+        - 高倍率
+        - 日本
+    "\U0001F1EF\U0001F1F5 Japan | 日用 0.2x":
+        - 低倍率
+        - 日本
+    "\U0001F1EF\U0001F1F5 Japan 01":
+        - 日本
+    "\U0001F1EF\U0001F1F5 Japan 02":
+        - 日本
+    "\U0001F1EF\U0001F1F5 Japan 03":
+        - 日本
+    "\U0001F1EF\U0001F1F5 Japan 04":
+        - 日本
+    "\U0001F1EF\U0001F1F5 Japan 05":
+        - 日本
+    "\U0001F1EF\U0001F1F5 Japan 06":
+        - 日本
+    "\U0001F1EF\U0001F1F5 Japan 07":
+        - 日本
+    "\U0001F1EF\U0001F1F5 Japan 08":
+        - 日本
+    "\U0001F1F0\U0001F1F5 North Korea":
+        - 韩国
+    "\U0001F1F0\U0001F1F5 North Korea | 冷门":
+        - 韩国
+    "\U0001F1F0\U0001F1F7 KR1 Moack":
+        - 韩国
+    "\U0001F1F0\U0001F1F7 KR2 AWS":
+        - 萨摩亚
+    "\U0001F1F0\U0001F1F7 KR3 Oracle":
+        - 韩国
+    "\U0001F1F0\U0001F1F7 KR4 LG":
+        - 韩国
+    "\U0001F1F0\U0001F1F7 KR5 Moack [UDPN 3X]":
+        - 高倍率
+        - 韩国
+    "\U0001F1F0\U0001F1F7 KR6 SK [UDPN 3X]":
+        - 高倍率
+        - 韩国
+    "\U0001F1F0\U0001F1F7 KR7 Ucloud [UDPN 3X]":
+        - 高倍率
+        - 韩国
+    "\U0001F1F0\U0001F1F7 KR8 AWS [UDPN 3X]":
+        - 高倍率
+        - 韩国
+    "\U0001F1F0\U0001F1F7 South Korea | 家宽 3.0x":
+        - 高倍率
+        - 韩国
+    "\U0001F1F2\U0001F1FD Mexico":
+        - 墨西哥
+    "\U0001F1F2\U0001F1FE Malaysia | 冷门":
+        - 马来西亚
+    "\U0001F1F2\U0001F1FE Malaysia1":
+        - 马来西亚
+    "\U0001F1F2\U0001F1FE Malaysia2 TM":
+        - 马来西亚
+    "\U0001F1F3\U0001F1EC Nigeria":
+        - 尼日利亚
+    "\U0001F1F3\U0001F1EC Nigeria | 冷门":
+        - 尼日利亚
+    "\U0001F1F3\U0001F1F1 Netherlands":
+        - 荷兰
+    "\U0001F1F3\U0001F1F4 Norway":
+        - 挪威
+    "\U0001F1F3\U0001F1FF New Zealand":
+        - 新西兰
+    "\U0001F1F3\U0001F1FF New Zealand | 家宽 3.0x":
+        - 高倍率
+        - 新西兰
+    "\U0001F1F5\U0001F1EA Peru":
+        - 秘鲁
+    "\U0001F1F5\U0001F1ED Philippines1":
+        - 菲律宾
+    "\U0001F1F5\U0001F1ED Philippines2 [2X]":
+        - 高倍率
+        - 菲律宾
+    "\U0001F1F7\U0001F1FA Russia":
+        - 俄罗斯
+    "\U0001F1F8\U0001F1EA Sweden":
+        - 瑞典
+    "\U0001F1F8\U0001F1EC SG1 Gcore [0.2X]":
+        - 低倍率
+        - 新加坡
+    "\U0001F1F8\U0001F1EC SG2 Akari":
+        - 新加坡
+    "\U0001F1F8\U0001F1EC SG3 DigitalOcean":
+        - 新加坡
+    "\U0001F1F8\U0001F1EC SG4 Cloudflare":
+        - 新加坡
+    "\U0001F1F8\U0001F1EC SG5 AWS":
+        - 新加坡
+    "\U0001F1F8\U0001F1EC SG6 SG.GS":
+        - 新加坡
+    "\U0001F1F8\U0001F1EC SG7 SG.GS [UDPN 3X]":
+        - 高倍率
+        - 新加坡
+    "\U0001F1F8\U0001F1EC SG8 Misaka [UDPN 3X]":
+        - 高倍率
+        - 新加坡
+    "\U0001F1F8\U0001F1EC SG9 Eons [UDPN 3X]":
+        - 高倍率
+        - 新加坡
+    "\U0001F1F8\U0001F1EC SG10 AWS [UDPN 3X]":
+        - 高倍率
+        - 新加坡
+    "\U0001F1F8\U0001F1EC SG11 Huawei [UDPN 3X]":
+        - 新加坡
+    "\U0001F1F8\U0001F1EC SG11 M1 [UDPN 3X]":
+        - 高倍率
+        - 新加坡
+    "\U0001F1F8\U0001F1EC Singapore | 劫持":
+        - 新加坡
+    "\U0001F1F8\U0001F1EC Singapore | 日用 0.2x":
+        - 低倍率
+        - 新加坡
+    "\U0001F1F8\U0001F1EC Singapore 01":
+        - 新加坡
+    "\U0001F1F8\U0001F1EC Singapore 02":
+        - 新加坡
+    "\U0001F1F8\U0001F1EC Singapore 03":
+        - 新加坡
+    "\U0001F1F8\U0001F1EC Singapore 04":
+        - 新加坡
+    "\U0001F1F8\U0001F1EC Singapore 05":
+        - 新加坡
+    "\U0001F1F8\U0001F1EC Singapore 06":
+        - 新加坡
+    "\U0001F1F8\U0001F1EC Singapore 07":
+        - 新加坡
+    "\U0001F1F8\U0001F1EC Singapore 08":
+        - 新加坡
+    "\U0001F1F9\U0001F1ED Thailand1 CAT":
+        - 泰国
+    "\U0001F1F9\U0001F1ED Thailand2 Bangmod":
+        - 泰国
+    "\U0001F1F9\U0001F1F7 Turkey | 冷门":
+        - 土耳其
+    "\U0001F1FA\U0001F1F8 US-Emby专用 0.01x":
+        - 飞舞结点
+        - Emby
+    "\U0001F1FA\U0001F1F8 US1 AWS":
+        - 萨摩亚
+    "\U0001F1FA\U0001F1F8 US2 Dmit":
+        - 美国
+    "\U0001F1FA\U0001F1F8 US3 Misaka":
+        - 美国
+    "\U0001F1FA\U0001F1F8 US4 Misaka":
+        - 美国
+    "\U0001F1FA\U0001F1F8 US5 Misaka":
+        - 美国
+    "\U0001F1FA\U0001F1F8 US6 Frontier":
+        - 美国
+    "\U0001F1FA\U0001F1F8 US7 Comcast":
+        - 美国
+    "\U0001F1FA\U0001F1F8 US8 Verizon":
+        - 美国
+    "\U0001F1FA\U0001F1F8 US9 AT&T":
+        - 美国
+    "\U0001F1FA\U0001F1F8 US10 Cloudflare":
+        - 美国
+    "\U0001F1FA\U0001F1F8 US11 Google [UDPN 3X]":
+        - 高倍率
+        - 美国
+    "\U0001F1FA\U0001F1F8 US12 T-mobile [UDPN 3X]":
+        - 高倍率
+        - 美国
+    "\U0001F1FA\U0001F1F8 US13 Frontier [UDPN 3X]":
+        - 高倍率
+        - 美国
+    "\U0001F1FA\U0001F1F8 US14 Misaka [UDPN 3X]":
+        - 高倍率
+        - 美国
+    "\U0001F1FA\U0001F1F8 United States | 家宽 3.0x":
+        - 高倍率
+        - 美国
+    "\U0001F1FA\U0001F1F8 United States 01":
+        - 美国
+    "\U0001F1FA\U0001F1F8 United States 02":
+        - 美国
+    "\U0001F1FA\U0001F1F8 United States 03":
+        - 美国
+    "\U0001F1FA\U0001F1F8 United States 04":
+        - 美国
+    "\U0001F1FA\U0001F1F8 United States 05":
+        - 美国
+    "\U0001F1FA\U0001F1F8 United States 06":
+        - 美国
+    "\U0001F1FA\U0001F1F8 United States 07":
+        - 美国
+    "\U0001F1FA\U0001F1F8 United States 08":
+        - 美国
+    "\U0001F1FB\U0001F1F3 Vietnam":
+        - 越南
+    "\U0001F1FF\U0001F1E6 South Africa":
+        - 南非
+    final:
+        - hk
+        - openai
+    以色列IL-T:
+        - 以色列
+    俄罗斯RU-T:
+        - 俄罗斯
+    印度-优化:
+        - 印度
+    台湾-优化:
+        - 台湾
+    台湾-优化2:
+        - 台湾
+    台湾-优化3:
+        - 台湾
+    台湾WAP-T:
+        - 台湾
+    土耳其TR-T:
+        - 土耳其
+    尼日利亚NI-T:
+        - 尼日利亚
+    意大利IT-T:
+        - 意大利
+    新加坡-优化:
+        - 新加坡
+    新加坡-优化-GPT:
+        - 新加坡
+    新加坡-优化2:
+        - 新加坡
+    新加坡-优化3:
+        - 新加坡
+    新加坡SG-T:
+        - 新加坡
+    日本-优化:
+        - 日本
+    日本-优化-GPT:
+        - 日本
+    日本-优化2:
+        - 日本
+    日本-优化2-GPT:
+        - 日本
+    日本-优化3:
+        - 日本
+    日本-优化3-GPT:
+        - 日本
+    日本JP-T:
+        - 日本
+    日本JP-T-GPT:
+        - 日本
+    澳大利亚AU-T:
+        - 澳大利亚
+    美国LA-优化-GPT:
+        - 美国
+    美国LA-优化2-GPT:
+        - 美国
+    美国LA-优化3-GPT:
+        - 美国
+    美国USLA-T-GPT:
+        - 美国
+    英国-优化:
+        - 英国
+    英国-优化2:
+        - 英国
+    英国-优化2-GPT:
+        - 英国
+    英国-优化3:
+        - 英国
+    英国-优化3-GPT:
+        - 英国
+    英国UK-T:
+        - 英国
+    越南VN-T:
+        - 越南
+    阿根廷AR-T:
+        - 阿根廷
+    韩国KR-T:
+        - 韩国
+    香港HKT-优化2:
+        - 香港
+    香港HY-优化:
+        - 香港
+    香港HY-优化2:
+        - 香港
+    香港WAP-优化:
+        - 香港
+    香港WAP-优化2:
+        - 香港
+    香港wap-T:
+        - 香港
+groupleveldic:
+    EMBY: 1
+    Final: 1
+    GLOBAL: 1
+    Steam: 1
+    低倍率结点: 1
+    其他地区国家: 1
+    台湾: 1
+    新加坡: 1
+    日本: 1
+    美国: 1
+    英国: 1
+    韩国: 1
+    香港: 1
+interval: 300
+timeout: 1200
