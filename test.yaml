@@ -1,9 +1,7 @@
-interval: 300
-timeout: 1200
 providerlevel:
     mesl: 1
     planb: 1
-    planc: 2.3
+    planc: 1.3
 grouplabeldic:
     Final:
         低倍率: 2
@@ -322,6 +320,8 @@ proxymark:
     "\U0001F1F8\U0001F1EC SG10 AWS [UDPN 3X]":
         - 高倍率
         - 新加坡
+    "\U0001F1F8\U0001F1EC SG11 Huawei [UDPN 3X]":
+        - 新加坡
     "\U0001F1F8\U0001F1EC SG11 M1 [UDPN 3X]":
         - 高倍率
         - 新加坡
@@ -513,3 +513,5 @@ groupleveldic:
     英国: 1
     韩国: 1
     香港: 1
+interval: 300
+timeout: 1200

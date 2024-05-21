@@ -204,17 +204,29 @@ func checkmark(gradeproxy *GradeProxy, gradegroup *GradeGroup) float64 {
 	return p / float64(n)
 }
 func (gradegroup *GradeGroup) GiveScore() {
-
 	for _, name := range gradegroup.All {
-
-		gradeproxy, ok := gradegroup.Source[name]
-		if ok {
+		if rootname := gradegroup.getroot(name); rootname != "" {
+			gradeproxy := gradegroup.Source[rootname]
 			priority := checkmark(gradeproxy, gradegroup)
 			gradegroup.Points[name] = int(float64(gradeproxy.Point) * priority)
 
 		}
 
 	}
+}
+
+func (gradegroup *GradeGroup) getroot(name string) string {
+	if _, ok := gradegroup.Source[name]; ok {
+		return name
+	} else {
+		groupmsg, _ := plus.GetGroupMessage(name)
+		name = groupmsg.Now
+		if name == "" {
+			return name
+		}
+		return gradegroup.getroot(name)
+	}
+
 }
 func (gradegroup *GradeGroup) ChangeIf() {
 	if !gradegroup.Block.After(time.Now()) {
@@ -228,9 +240,12 @@ func (gradegroup *GradeGroup) ChangeIf() {
 				fmt.Println("切换失败", err)
 				return
 			}
-			fmt.Printf("%s old:%s-延迟%d-分数%d --> new:%s-延迟%d-分数%d\n", gradegroup.Name, nowuse, gradegroup.Source[nowuse].DelayNow, nowpoint, name, gradegroup.Source[name].DelayNow, value)
+			//log
+			fmt.Printf("%s %s old:%s-延迟%d-分数%d --> new:%s-延迟%d-分数%d\n", time.Now().Format("2006-01-02 15:04:05"), gradegroup.Name, nowuse, gradegroup.Source[gradegroup.getroot(nowuse)].DelayNow, nowpoint, name, gradegroup.Source[gradegroup.getroot(name)].DelayNow, value)
 		}
 
+	} else {
+		//fmt.Println("无法操作")
 	}
 
 }
@@ -267,7 +282,12 @@ func (gradeproxy *GradeProxy) SetMark(mark string) {
 
 }
 func (gradeproxy *GradeProxy) Update() {
-	delay, _ := plus.GeneralDelayTest(gradeproxy.Name)
+	var delay *clash.ProxyDelay
+	delay, _ = plus.GeneralDelayTest(gradeproxy.Name)
+	if delay.Delay == 0 {
+		//给你机会别不中用
+		delay, _ = plus.GeneralDelayTest(gradeproxy.Name)
+	}
 	gradeproxy.DelayNow = delay.Delay
 	gradeproxy.DelayHistory = append(gradeproxy.DelayHistory, gradeproxy.DelayNow)
 	//OneInsertHistory(gradeproxy)
