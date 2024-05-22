@@ -88,6 +88,11 @@ func (gradegroup *GradeGroup) ChangeIf() {
 		nowuse := gradegroup.Now
 		nowpoint := gradegroup.Points[nowuse]
 		name, value := maxInMap(gradegroup.Points)
+		nowroot := gradegroup.getroot(nowuse)
+		var nowdelay int
+		if now, ok := gradegroup.Source[nowroot]; ok {
+			nowdelay = now.DelayNow
+		}
 		if value > int(float64(nowpoint)*1.3) {
 			err := clash.SwitchProxy(gradegroup.Name, name)
 			if err != nil {
@@ -96,10 +101,10 @@ func (gradegroup *GradeGroup) ChangeIf() {
 			}
 			//log
 			if MysqlOn {
-				OneInsertChangeHistroy(gradegroup.Name, nowuse, gradegroup.Source[gradegroup.getroot(nowuse)].DelayNow, name, gradegroup.Source[gradegroup.getroot(name)].DelayNow)
+				OneInsertChangeHistroy(gradegroup.Name, nowuse, nowdelay, name, gradegroup.Source[gradegroup.getroot(name)].DelayNow)
 
 			} else {
-				fmt.Printf("%s %s old:%s-延迟%d-分数%d --> new:%s-延迟%d-分数%d\n", time.Now().Format("2006-01-02 15:04:05"), gradegroup.Name, nowuse, gradegroup.Source[gradegroup.getroot(nowuse)].DelayNow, nowpoint, name, gradegroup.Source[gradegroup.getroot(name)].DelayNow, value)
+				fmt.Printf("%s %s old:%s-延迟%d-分数%d --> new:%s-延迟%d-分数%d\n", time.Now().Format("2006-01-02 15:04:05"), gradegroup.Name, nowuse, nowdelay, nowpoint, name, gradegroup.Source[gradegroup.getroot(name)].DelayNow, value)
 			}
 		}
 
