@@ -24,8 +24,3 @@ func GetALLDelayNow() map[string]int {
 	}
 	return delay_dic
 }
-
-//func TestAllDelay(t *testing.T) {
-//
-//	alldelay := AllDelayTest()
-//}

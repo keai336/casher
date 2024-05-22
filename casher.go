@@ -24,10 +24,18 @@ func (casher *Casher) Init() {
 }
 func NewOneCasher(configpt string) *Casher {
 	casher := new(Casher)
-	clash.SetURL("http://10.18.18.31:9090")
-	clash.SetSecret("D1u5ETt5")
 	casher.ConfigPath = configpt
 	casher.Config = config.LoadConfig(configpt)
+	clash.SetURL(casher.Url)
+	clash.SetSecret(casher.Secret)
+	version, err := clash.GetVersion()
+	if err != nil {
+		fmt.Println("wrong url")
+		panic(err)
+	}
+	if version.Version == "" {
+		panic("wrong secret")
+	}
 	casher.Init()
 	return casher
 
@@ -41,20 +49,20 @@ func (casher *Casher) OffDuty() {
 	removeEmptyValues := func(m interface{}) {
 		switch v := m.(type) {
 		case map[string]float64:
-			for k, _ := range v {
+			for k := range v {
 				if v[k] == 0.0 {
 					delete(v, k)
 				}
 			}
 		case map[string][]string:
-			for k, _ := range v {
+			for k := range v {
 				if len(v[k]) == 0 {
 					delete(v, k)
 				}
 
 			}
 		case map[string]map[string]float64:
-			for k, _ := range v {
+			for k := range v {
 				if len(v[k]) == 0 {
 					delete(v, k)
 				}
@@ -68,7 +76,7 @@ func (casher *Casher) OffDuty() {
 		seen := make(map[string]bool)
 
 		// 创建一个新的切片来保存去重后的结果
-		result := []string{}
+		var result []string
 
 		// 遍历切片中的每个元素
 		for _, value := range slice {
@@ -125,8 +133,8 @@ func (casher *Casher) DelProxyMark(proxyname string, mark string) {
 
 	if proxy, ok := casher.Source[proxyname]; ok {
 		proxy.Mark = removeValue(proxy.Mark, mark)
+		return
 	}
-	return
 
 	fmt.Println("no proxy named", proxyname)
 }

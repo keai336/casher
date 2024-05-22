@@ -16,3 +16,13 @@ func TestGeneralDelayTest(t *testing.T) {
 	fmt.Println(err)
 	println(delay.Delay)
 }
+func TestAllDelay(t *testing.T) {
+	clash.SetURL("http://127.0.0.1:9090")
+	clash.SetSecret("adfxf")
+	config, err := clash.GetVersion()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(config.Version)
+}
