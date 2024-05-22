@@ -58,9 +58,9 @@ func (gradeprovider *GradeProvider) InitProxies(proxiesmarksdic map[string][]str
 		file, err := os.Open("blacklist")
 		if err != nil {
 			fmt.Printf("无法打开文件: %v", err)
+			defer file.Close()
+			return lines
 		}
-		defer file.Close()
-		return lines
 
 		// 使用 bufio.Scanner 逐行读取文件
 		scanner := bufio.NewScanner(file)

@@ -95,10 +95,11 @@ func (gradegroup *GradeGroup) ChangeIf() {
 				return
 			}
 			//log
-			fmt.Printf("%s %s old:%s-延迟%d-分数%d --> new:%s-延迟%d-分数%d\n", time.Now().Format("2006-01-02 15:04:05"), gradegroup.Name, nowuse, gradegroup.Source[gradegroup.getroot(nowuse)].DelayNow, nowpoint, name, gradegroup.Source[gradegroup.getroot(name)].DelayNow, value)
 			if MysqlOn {
 				OneInsertChangeHistroy(gradegroup.Name, nowuse, gradegroup.Source[gradegroup.getroot(nowuse)].DelayNow, name, gradegroup.Source[gradegroup.getroot(name)].DelayNow)
 
+			} else {
+				fmt.Printf("%s %s old:%s-延迟%d-分数%d --> new:%s-延迟%d-分数%d\n", time.Now().Format("2006-01-02 15:04:05"), gradegroup.Name, nowuse, gradegroup.Source[gradegroup.getroot(nowuse)].DelayNow, nowpoint, name, gradegroup.Source[gradegroup.getroot(name)].DelayNow, value)
 			}
 		}
 
