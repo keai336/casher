@@ -49,17 +49,6 @@ func LoadConfig(path string) *Config {
 			fmt.Scanln(&config.Url)
 			fmt.Println("配置secret")
 			fmt.Scanln(&config.Secret)
-			fileName := "config.yaml"
-
-			// 创建文件
-			file, err := os.Create(fileName)
-			if err != nil {
-				//fmt.Printf("Error creating file %s: %v\n", fileName, err)
-				panic(err)
-			}
-			defer file.Close()
-
-			fmt.Printf("File %s created successfully.\n", fileName)
 		}
 	} else {
 		if err := yaml.Unmarshal(content, config); err != nil {
