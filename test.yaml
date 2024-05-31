@@ -9,9 +9,11 @@ grouplabeldic:
         低倍率: 2
         飞舞结点: 0.01
         香港: 2.3
+        高倍率: 0.5
     美国:
         飞舞结点: 0.01
         高倍率: 0.5
+        Spotify: 3
 proxymark:
     "\U0001F1E6\U0001F1F7 Argentina":
         - 阿根廷
@@ -108,6 +110,7 @@ proxymark:
     "\U0001F1EC\U0001F1E7 United Kingdom | 家宽 3.0x":
         - 高倍率
         - 英国
+        - Spotify
     "\U0001F1EC\U0001F1E7 United Kingdom 01":
         - 英国
     "\U0001F1EC\U0001F1E7 United Kingdom 02":
