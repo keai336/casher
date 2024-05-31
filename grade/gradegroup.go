@@ -109,7 +109,7 @@ func (gradegroup *GradeGroup) CheckLock() float64 {
 	if total == 0 {
 		return -1
 	}
-	return float64(n) / float64(total)
+	return 2 * float64(n) / float64(total)
 }
 func (gradegroup *GradeGroup) GetlockScore(unlock map[string]int) {
 
@@ -124,7 +124,7 @@ func (gradegroup *GradeGroup) FindBest(unlock map[string]int) {
 	case -1:
 		unlock[nowuse] = gradegroup.Points[nowuse]
 	default:
-		unlock[nowuse] = int(float64(gradegroup.Points[nowuse]) * v)
+		unlock[nowuse] = int(float64(gradegroup.Points[nowuse]) * v * v * v)
 	}
 	delete(gradegroup.Points, nowuse)
 	if len(gradegroup.Points) != 0 {
@@ -190,7 +190,7 @@ func (gradegroup *GradeGroup) ChangeIf() {
 		case -1:
 			lockdic[nowuse] = gradegroup.Points[nowuse]
 		default:
-			lockdic[nowuse] = int(float64(gradegroup.Points[nowuse]) * v)
+			lockdic[nowuse] = int(float64(gradegroup.Points[nowuse]) * v * v * v)
 
 		}
 		delete(gradegroup.Points, nowuse)
