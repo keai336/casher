@@ -183,8 +183,8 @@ func (gradegroup *GradeGroup) ChangeIf() {
 		nowuse := gradegroup.Now
 		nowpoint := gradegroup.Points[nowuse]
 		lockdic := make(map[string]int)
-
-		switch v := gradegroup.CheckLock(); v {
+		v := gradegroup.CheckLock()
+		switch v {
 		case 0:
 			lockdic[nowuse] = 1
 		case -1:
@@ -205,12 +205,21 @@ func (gradegroup *GradeGroup) ChangeIf() {
 		newuse := gradegroup.Now
 		newpoint := lockdic[newuse]
 		//1.3 为僭越值,目的是保当前使用
-		if newpoint > int(float64(nowpoint)*1.3) {
+		var jmyt float64
+		switch v {
+		case -1, 1:
+			jmyt = 1.3
+		default:
+			jmyt = 1
+		}
+
+		if newpoint > int(float64(nowpoint)*jmyt) {
 			fmt.Println("use", newuse, newpoint)
 		} else {
 			clash.SwitchProxy(gradegroup.Name, nowuse)
 			gradegroup.UpdateStu()
 		}
+
 	} else {
 		//fmt.Println("无法操作")
 	}
