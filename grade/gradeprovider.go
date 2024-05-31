@@ -96,6 +96,45 @@ func (gradeprovider *GradeProvider) InitProxies(proxiesmarksdic map[string][]str
 	wait.Wait()
 	gradeprovider.GradeProxies = gradeproxies
 }
+
+type Range struct {
+	minDelay int
+	maxDelay int
+	minScore int
+	maxScore int
+}
+
+func getScore(delay int, max int) int {
+	// 特殊处理延迟为0的情况
+	if delay == 0 {
+		return 0
+	}
+
+	// 定义延迟范围和对应的评分范围
+	ranges := []Range{
+		{0, 50, 100, 100},
+		{50, 100, 90, 100},
+		{100, 200, 80, 90},
+		{200, 300, 70, 80},
+		{300, 500, 50, 70},
+		{500, 800, 30, 50},
+		{800, max, 0, 30},
+		{max, -1, 0, 0}, // max 到 n 的情况，这里 -1 表示无上限
+	}
+
+	for _, r := range ranges {
+		if delay >= r.minDelay && (delay < r.maxDelay || r.maxDelay == -1) {
+			if r.minScore == r.maxScore {
+				return r.minScore
+			}
+			// 线性插值计算评分
+			return r.minScore + (r.maxScore-r.minScore)*(delay-r.minDelay)/(r.maxDelay-r.minDelay)
+		}
+	}
+
+	return 0 // 默认返回 0 分
+}
+
 func (gradeprovider *GradeProvider) GiveScore(gradeproxy *GradeProxy) {
 	relativeVariance := func(data []int) (float64, float64) {
 		n := len(data)
@@ -124,18 +163,29 @@ func (gradeprovider *GradeProvider) GiveScore(gradeproxy *GradeProxy) {
 	}
 	var delaypoint float64
 	var avpoint float64
-	if gradeproxy.DelayNow != 0 {
-		delaypoint = 10 * float64(plus.TimeOut) / float64(gradeproxy.DelayNow) * 0.6
-		av, rv := relativeVariance(gradeproxy.DelayHistory)
-		avpoint = 10 * float64(plus.TimeOut) / av * 0.4
-		//fmt.Println(rv)
-		if 1-3*rv <= 0 {
-			delaypoint = 0
-		}
-		delaypoint = delaypoint * (1 - 2*rv)
+	//if gradeproxy.DelayNow != 0 {
+	//	delaypoint = 10 * float64(plus.TimeOut) / float64(gradeproxy.DelayNow) * 0.6
+	//	av, rv := relativeVariance(gradeproxy.DelayHistory)
+	//	avpoint = 10 * float64(plus.TimeOut) / av * 0.4
+	//	//fmt.Println(rv)
+	//	if 1-3*rv <= 0 {
+	//		delaypoint = 0
+	//	}
+	//	delaypoint = delaypoint * (1 - 2*rv)
+	//}
+	//mark := gradeprovider.Level * gradeproxy.Level * (delaypoint + avpoint)
+	//gradeproxy.Point = int(mark)
+	delaypoint = float64(getScore(gradeproxy.DelayNow, plus.TimeOut))
+	av, rv := relativeVariance(gradeproxy.DelayHistory)
+	avpoint = float64(getScore(int(av), plus.TimeOut))
+	if wfdkxk := 1 - 2*rv; wfdkxk <= 0 {
+		delaypoint = 0
+	} else {
+		delaypoint = delaypoint * wfdkxk
 	}
-	mark := gradeprovider.Level * gradeproxy.Level * (delaypoint + avpoint)
+	mark := gradeprovider.Level * gradeproxy.Level * (0.4*delaypoint + 0.6*avpoint)
 	gradeproxy.Point = int(mark)
+
 }
 func (gradeprovider *GradeProvider) Update() {
 	provider, err := plus.GetProviderMessage(gradeprovider.Name)
