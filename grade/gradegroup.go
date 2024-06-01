@@ -6,6 +6,7 @@ import (
 	lockcheck "github.com/keai336/MediaUnlockTest"
 	"github.com/obgnail/clash-api/clash"
 	"net/http"
+	"sync"
 	"time"
 )
 
@@ -90,57 +91,128 @@ func (gradegroup *GradeGroup) getroot(name string) string {
 //
 // }
 func (gradegroup *GradeGroup) CheckLock() float64 {
-	n := 0
-	value := 0
-	total := 0
-	for k, _ := range gradegroup.LabelDic {
-		if checkfunc, ok := LockTestDic[k]; ok {
-			total++
-			rs := checklock(checkfunc)
-			if rs.Status == -1 {
-				value = 0
-			} else {
-				value = 1
-			}
-			n = n + value
-		}
+	var n, total int
+	var mu sync.Mutex
+	var wg sync.WaitGroup
 
+	for k := range gradegroup.LabelDic {
+		if checkfunc, ok := LockTestDic[k]; ok {
+			wg.Add(1)
+			go func(cf func(r http.Client) lockcheck.Result) {
+				defer wg.Done()
+				rs := checklock(cf)
+				value := 0
+				if rs.Status != -1 {
+					value = 1
+				}
+				mu.Lock()
+				n += value
+				mu.Unlock()
+			}(checkfunc)
+			total++
+		}
 	}
+
+	wg.Wait()
+
 	if total == 0 {
 		return -1
 	}
-	return 2 * float64(n) / float64(total)
+	return float64(n) / float64(total)
 }
 func (gradegroup *GradeGroup) GetlockScore(unlock map[string]int) {
 
 }
-func (gradegroup *GradeGroup) FindBest(unlock map[string]int) {
-	nowuse := gradegroup.Now
-	//fmt.Println(nowuse)
-	switch v := gradegroup.CheckLock(); v {
-	case 1:
-		unlock[nowuse] = gradegroup.Points[nowuse]
-		return
-	case -1:
-		unlock[nowuse] = gradegroup.Points[nowuse]
-	default:
-		unlock[nowuse] = int(float64(gradegroup.Points[nowuse]) * v * v * v)
+func (group *GradeGroup) getlockchecknum() int {
+	count := 0
+	for key := range group.LabelDic {
+		if _, exists := LockTestDic[key]; exists {
+			count++
+		}
 	}
-	delete(gradegroup.Points, nowuse)
-	if len(gradegroup.Points) != 0 {
+	return count
+}
+
+func (proxy *GradeProxy) getlockchecknum() int {
+	count := 0
+	for _, key := range proxy.Mark {
+		if _, exists := LockTestDic[key]; exists {
+			count++
+		}
+	}
+	return count
+}
+func (gradegroup *GradeGroup) FindBest(unlock map[string]int) {
+	switch num := gradegroup.getlockchecknum(); num {
+	case 0:
 		name, _ := maxInMap(gradegroup.Points)
 		clash.SwitchProxy(gradegroup.Name, name)
-		//fmt.Println("切换到", name)
-		gradegroup.UpdateStu()
-		gradegroup.FindBest(unlock)
-	} else {
-		name, _ := maxInMap(unlock)
-		clash.SwitchProxy(gradegroup.Name, name)
-		//fmt.Println(gradegroup.Name, "最优解", name, value)
 		gradegroup.UpdateStu()
 		return
-	}
+	default:
+		nowuse := gradegroup.Now
+		switch v := gradegroup.CheckLock(); v {
+		case 1:
+			unlock[nowuse] = gradegroup.Points[nowuse]
+			return
+		case -1:
+			unlock[nowuse] = 0
+		default:
+			unlock[nowuse] = int(float64(gradegroup.Points[nowuse]) * v * v * v)
+		}
+		delete(gradegroup.Points, nowuse)
+		if len(gradegroup.Points) != 0 {
+			var next string
+			var mark int = 1
+			for range gradegroup.Points {
+				next, _ = maxInMap(gradegroup.Points)
+				if pcn := gradegroup.Source[next].getlockchecknum(); pcn != 0 {
+					mark = mark * 0
+					break
+				} else {
+					unlock[next] = gradegroup.Points[next]
+					delete(gradegroup.Points, next)
+				}
 
+			}
+			switch mark {
+			case 0:
+				clash.SwitchProxy(gradegroup.Name, next)
+				gradegroup.UpdateStu()
+				gradegroup.FindBest(unlock)
+			case 1:
+				name, _ := maxInMap(unlock)
+				clash.SwitchProxy(gradegroup.Name, name)
+				gradegroup.UpdateStu()
+				return
+
+			}
+		} else {
+			name, _ := maxInMap(unlock)
+			clash.SwitchProxy(gradegroup.Name, name)
+			gradegroup.UpdateStu()
+			return
+		}
+
+		//	if len(gradegroup.Points) != 0 {
+		//		name, _ := maxInMap(gradegroup.Points)
+		//		switch gradegroup.Source[name].getlockchecknum() {
+		//		case 0:
+		//
+		//		default:
+		//			clash.SwitchProxy(gradegroup.Name, name)
+		//			gradegroup.UpdateStu()
+		//			gradegroup.FindBest(unlock)
+		//		}
+		//	} else {
+		//		name, _ := maxInMap(unlock)
+		//		clash.SwitchProxy(gradegroup.Name, name)
+		//		gradegroup.UpdateStu()
+		//		return
+		//	}
+		//
+		//}
+	}
 }
 
 //func (gradegroup *GradeGroup) ChangeIf() {
@@ -180,38 +252,60 @@ func (gradegroup *GradeGroup) FindBest(unlock map[string]int) {
 func (gradegroup *GradeGroup) ChangeIf() {
 	if !gradegroup.Block.After(time.Now()) {
 		//fmt.Println(gradgroup.Name, "可更改")
+		var jmyt float64
 		nowuse := gradegroup.Now
 		nowpoint := gradegroup.Points[nowuse]
-		lockdic := make(map[string]int)
-		v := gradegroup.CheckLock()
-		switch v {
+		var newuse string
+		var newpoint int
+		switch gradegroup.getlockchecknum() {
 		case 0:
-			lockdic[nowuse] = 1
-		case -1:
-			lockdic[nowuse] = gradegroup.Points[nowuse]
+			name, _ := maxInMap(gradegroup.Points)
+			clash.SwitchProxy(gradegroup.Name, name)
+			gradegroup.UpdateStu()
+			newuse = gradegroup.Now
+			newpoint = gradegroup.Points[newuse]
+			jmyt = 1.3
+
 		default:
-			lockdic[nowuse] = int(float64(gradegroup.Points[nowuse]) * v * v * v)
+			lockdic := make(map[string]int)
+			v := gradegroup.CheckLock()
+			switch v {
+			case 0, -1:
+				lockdic[nowuse] = 1
+			default:
+				lockdic[nowuse] = int(float64(gradegroup.Points[nowuse]) * v * v * v)
+
+			}
+			delete(gradegroup.Points, nowuse)
+			if len(gradegroup.Points) == 0 {
+				return
+			}
+			var next string
+			for range gradegroup.Points {
+				next, _ = maxInMap(gradegroup.Points)
+				if pcn := gradegroup.Source[next].getlockchecknum(); pcn != 0 {
+					break
+				} else {
+					lockdic[next] = gradegroup.Points[next]
+					delete(gradegroup.Points, next)
+				}
+
+			}
+			clash.SwitchProxy(gradegroup.Name, next)
+			gradegroup.UpdateStu()
+			gradegroup.FindBest(lockdic)
+			nowpoint = lockdic[nowuse]
+			newuse = gradegroup.Now
+			newpoint = lockdic[newuse]
+			switch v {
+			case -1, 1:
+				jmyt = 1.3
+			default:
+				jmyt = 1
+			}
 
 		}
-		delete(gradegroup.Points, nowuse)
-		if len(gradegroup.Points) == 0 {
-			return
-		}
-		name, _ := maxInMap(gradegroup.Points)
-		clash.SwitchProxy(gradegroup.Name, name)
-		gradegroup.UpdateStu()
-		gradegroup.FindBest(lockdic)
-		nowpoint = lockdic[nowuse]
-		newuse := gradegroup.Now
-		newpoint := lockdic[newuse]
 		//1.3 为僭越值,目的是保当前使用
-		var jmyt float64
-		switch v {
-		case -1, 1:
-			jmyt = 1.3
-		default:
-			jmyt = 1
-		}
 
 		if newpoint > int(float64(nowpoint)*jmyt) {
 			fmt.Println("use", newuse, newpoint)
