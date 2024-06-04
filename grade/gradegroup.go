@@ -5,6 +5,7 @@ import (
 	"fmt"
 	lockcheck "github.com/keai336/MediaUnlockTest"
 	"github.com/obgnail/clash-api/clash"
+	"math"
 	"net/http"
 	"sync"
 	"time"
@@ -48,18 +49,20 @@ func checklock(f func(client http.Client) lockcheck.Result) lockcheck.Result {
 func checkmark(gradeproxy *GradeProxy, gradegroup *GradeGroup) float64 {
 	marks := gradeproxy.Mark
 	labeldic := gradegroup.LabelDic
-	p := 0.0
-	n := 0
+	jx := 1.0
+	ig := 1.0
+	n := 1
 	for _, v := range marks {
 		if value, ok := labeldic[v]; ok {
-			p += value
+			jx += value
+			ig *= value
 			n += 1
 		}
 	}
-	if n == 0 {
+	if n == 1 {
 		return 1
 	}
-	return p / float64(n)
+	return math.Pow((ig / jx * float64(n)), 0.7)
 }
 func (gradegroup *GradeGroup) GiveScore() {
 	for _, name := range gradegroup.All {
@@ -153,12 +156,12 @@ func (gradegroup *GradeGroup) FindBest(unlock map[string]int) {
 		nowuse := gradegroup.Now
 		switch v := gradegroup.CheckLock(); v {
 		case 1:
-			unlock[nowuse] = gradegroup.Points[nowuse]
+			unlock[nowuse] = int(float64(gradegroup.Points[nowuse]) * (1 + v) * 1.2)
 			return
-		case -1:
-			unlock[nowuse] = 0
+		case 0, -1:
+			unlock[nowuse] = gradegroup.Points[nowuse]
 		default:
-			unlock[nowuse] = int(float64(gradegroup.Points[nowuse]) * v * v * v)
+			unlock[nowuse] = int(float64(gradegroup.Points[nowuse]) * (1 + v))
 		}
 		delete(gradegroup.Points, nowuse)
 		if len(gradegroup.Points) != 0 {
@@ -257,6 +260,7 @@ func (gradegroup *GradeGroup) ChangeIf() {
 		nowpoint := gradegroup.Points[nowuse]
 		var newuse string
 		var newpoint int
+		var nowlockv float64
 		switch gradegroup.getlockchecknum() {
 		case 0:
 			name, _ := maxInMap(gradegroup.Points)
@@ -268,12 +272,15 @@ func (gradegroup *GradeGroup) ChangeIf() {
 
 		default:
 			lockdic := make(map[string]int)
-			v := gradegroup.CheckLock()
-			switch v {
+			nowlockv = gradegroup.CheckLock()
+			switch nowlockv {
 			case 0, -1:
-				lockdic[nowuse] = 1
+				lockdic[nowuse] = gradegroup.Points[nowuse]
+			case 1:
+				lockdic[nowuse] = int(float64(gradegroup.Points[nowuse]) * (1 + nowlockv) * 1.2)
+
 			default:
-				lockdic[nowuse] = int(float64(gradegroup.Points[nowuse]) * v * v * v)
+				lockdic[nowuse] = int(float64(gradegroup.Points[nowuse]) * (1 + nowlockv))
 
 			}
 			delete(gradegroup.Points, nowuse)
@@ -297,7 +304,7 @@ func (gradegroup *GradeGroup) ChangeIf() {
 			nowpoint = lockdic[nowuse]
 			newuse = gradegroup.Now
 			newpoint = lockdic[newuse]
-			switch v {
+			switch nowlockv {
 			case -1, 1:
 				jmyt = 1.3
 			default:
@@ -308,7 +315,7 @@ func (gradegroup *GradeGroup) ChangeIf() {
 		//1.3 为僭越值,目的是保当前使用
 
 		if newpoint > int(float64(nowpoint)*jmyt) {
-			fmt.Println("use", newuse, newpoint)
+			fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "use", newuse, newpoint, "old", nowuse, nowpoint)
 		} else {
 			clash.SwitchProxy(gradegroup.Name, nowuse)
 			gradegroup.UpdateStu()
@@ -318,6 +325,7 @@ func (gradegroup *GradeGroup) ChangeIf() {
 		//fmt.Println("无法操作")
 	}
 
+	clear(gradegroup.Points)
 }
 func (gradegroup *GradeGroup) UpdateStu() {
 	gradegroup.Group, _ = plus.GetGroupMessage(gradegroup.Name)

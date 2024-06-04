@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/obgnail/clash-api/clash"
 	"log"
+	"math"
 	"os"
 	"regexp"
 	"sync"
@@ -135,66 +136,84 @@ func getScore(delay int, max int) int {
 	return 0 // 默认返回 0 分
 }
 
-func (gradeprovider *GradeProvider) GiveScore(gradeproxy *GradeProxy) {
-	relativeVariance := func(data []int) (float64, float64) {
-		n := len(data)
-		if n == 0 {
-			return 0, 0
-		}
-
-		// 计算平均值
-		sum := 0
-		for _, x := range data {
-			sum += x
-		}
-		mean := float64(sum) / float64(n)
-
-		// 计算方差
-		sumOfSquares := 0.0
-		for _, x := range data {
-			diff := float64(x) - mean
-			sumOfSquares += diff * diff
-		}
-		variance := sumOfSquares / float64(n)
-
-		// 计算相对方差
-		relativeVariance := variance / (mean * mean)
-		return mean, relativeVariance
+func standardDeviation(data []int) float64 {
+	n := float64(len(data))
+	if n == 0 {
+		return 0
 	}
+
+	mean := 0.0
+	for _, value := range data {
+		mean += float64(value)
+	}
+	mean /= n
+
+	variance := 0.0
+	for _, value := range data {
+		variance += (float64(value) - mean) * (float64(value) - mean)
+	}
+	variance /= n
+
+	return math.Sqrt(variance)
+}
+
+func stabilityScore(data []int) float64 {
+	if len(data) == 0 {
+		return 0
+	}
+
+	stdDev := standardDeviation(data)
+	minValue := data[0]
+	maxValue := data[0]
+	for _, value := range data {
+		if value < minValue {
+			minValue = value
+		}
+		if value > maxValue {
+			maxValue = value
+		}
+	}
+	sigmaMax := maxValue - minValue
+
+	// 防止除以0的情况
+	if sigmaMax == 0 {
+		return 1.0
+	}
+
+	normalizedStdDev := (stdDev - 0) / float64(sigmaMax)
+	stabilityScore := 1 - normalizedStdDev
+
+	return stabilityScore
+}
+
+func (gradeprovider *GradeProvider) GiveScore(gradeproxy *GradeProxy) {
 	var delaypoint float64
 	var avpoint float64
-	//if gradeproxy.DelayNow != 0 {
-	//	delaypoint = 10 * float64(plus.TimeOut) / float64(gradeproxy.DelayNow) * 0.6
-	//	av, rv := relativeVariance(gradeproxy.DelayHistory)
-	//	avpoint = 10 * float64(plus.TimeOut) / av * 0.4
-	//	//fmt.Println(rv)
-	//	if 1-3*rv <= 0 {
-	//		delaypoint = 0
-	//	}
-	//	delaypoint = delaypoint * (1 - 2*rv)
-	//}
-	//mark := gradeprovider.Level * gradeproxy.Level * (delaypoint + avpoint)
-	//gradeproxy.Point = int(mark)
-	delaypoint = float64(getScore(gradeproxy.DelayNow, plus.TimeOut))
-	av, rv := relativeVariance(gradeproxy.DelayHistory)
-	avpoint = float64(getScore(int(av), plus.TimeOut))
-	if wfdkxk := 1 - 2*rv; wfdkxk <= 0 {
-		delaypoint = 0
-	} else {
-		delaypoint = delaypoint * wfdkxk
+	n := len(gradeproxy.DelayHistory)
+	sum := 0
+	for _, x := range gradeproxy.DelayHistory {
+		sum += x
 	}
-	mark := gradeprovider.Level * gradeproxy.Level * (0.4*delaypoint + 0.6*avpoint)
+	mean := float64(sum) / float64(n)
+	delaypoint = float64(getScore(gradeproxy.DelayNow, plus.TimeOut))
+	rv := stabilityScore(gradeproxy.DelayHistory)
+	avpoint = float64(getScore(int(mean), plus.TimeOut))
+	mark := gradeprovider.Level * gradeproxy.Level * (0.4*delaypoint + 0.6*avpoint) * rv
 	gradeproxy.Point = int(mark)
+	//fmt.Println(gradeproxy.Name, "稳定性", rv)
 
 }
 func (gradeprovider *GradeProvider) Update() {
+
 	provider, err := plus.GetProviderMessage(gradeprovider.Name)
 	if err != nil {
 		panic("wrong getprovider message")
 	}
 	gradeprovider.Provider = provider
+	//if gradeprovider.Left<=0||gradeprovider.Expire<=0{
+	//
+	//}
 	var wait sync.WaitGroup
-
 	for _, v := range gradeprovider.GradeProxies {
 		wait.Add(1)
 		go func(v *GradeProxy) {
