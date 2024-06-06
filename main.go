@@ -19,6 +19,7 @@ func main() {
 	go func() {
 		for {
 			casher.Update()
+			//fmt.Println(casher.Groups["美国"].Points)
 			time.Sleep(time.Duration(casher.Interval) * time.Second)
 		}
 

@@ -1,0 +1,13 @@
+providerlevel:
+    mesl: 1
+    planc: 2.3
+grouplabeldic:
+    Final:
+        final: 1
+        美国: 2.3
+proxymark:
+    final:
+        - hk
+        - openai
+groupleveldic:
+    Final: 1
