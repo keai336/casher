@@ -42,6 +42,7 @@
 5. 评价是基于proxy的延迟,provider,还有标签计算的.
 6. 组内评价时,会遍历proxy的mark,如果mark在group的grouplabeldic里,获得对应值的加成,大于1的值都是正向加成.如果group的grouplabeldic有流媒体相关的标签,还会检查其连通性,这是单独的评价,通过流通性检查的proxy分数也会有加成
 7. 详细看config.yaml里的标注
+8. 流程图 ![流程图](流程图.png)
 ###### **安装步骤**
 1. 自己编译或者下载release中的
 2. 第一次运行直接运行;后续运行可以指定配置文件路径
