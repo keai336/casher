@@ -3,14 +3,15 @@ providerlevel:
     planb: 1
     planc: 1.3
 grouplabeldic:
+    # 意思是Final组有低倍率的节点优先 飞舞节点是负向的,多个标签满足会进行综合评价.
     Final:
         低倍率: 5
         飞舞结点: 0.01
         香港: 2.3
         高倍率: 0.3
     美国:
-        Chatgpt: 3
-        Spotify: 3
+        Chatgpt: 3 #会进行连通性检查, 通过会加分的 ,详细请看 lockcheck.go里的dic
+        Spotify: 3 #同样
         飞舞结点: 0.01
         高倍率: 0.3
 proxymark:
