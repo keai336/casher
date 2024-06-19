@@ -156,12 +156,12 @@ func (gradegroup *GradeGroup) FindBest(unlock map[string]int) {
 		nowuse := gradegroup.Now
 		switch v := gradegroup.CheckLock(); v {
 		case 1:
-			unlock[nowuse] = int(float64(gradegroup.Points[nowuse]) * (1 + v) * 1.2)
+			unlock[nowuse] = int(float64(gradegroup.Points[nowuse]) * math.Pow(4, v) * 1.2)
 			return
 		case 0, -1:
 			unlock[nowuse] = gradegroup.Points[nowuse]
 		default:
-			unlock[nowuse] = int(float64(gradegroup.Points[nowuse]) * (1 + v))
+			unlock[nowuse] = int(float64(gradegroup.Points[nowuse]) * math.Pow(4, v))
 		}
 		delete(gradegroup.Points, nowuse)
 		if len(gradegroup.Points) != 0 {
@@ -277,10 +277,10 @@ func (gradegroup *GradeGroup) ChangeIf() {
 			case 0, -1:
 				lockdic[nowuse] = gradegroup.Points[nowuse]
 			case 1:
-				lockdic[nowuse] = int(float64(gradegroup.Points[nowuse]) * (1 + nowlockv) * 1.2)
+				lockdic[nowuse] = int(float64(gradegroup.Points[nowuse]) * math.Pow(4, nowlockv) * 1.2)
 
 			default:
-				lockdic[nowuse] = int(float64(gradegroup.Points[nowuse]) * (1 + nowlockv))
+				lockdic[nowuse] = int(float64(gradegroup.Points[nowuse]) * math.Pow(4, nowlockv))
 
 			}
 			delete(gradegroup.Points, nowuse)
