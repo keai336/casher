@@ -1,132 +1,82 @@
-# Casher
-<!-- PROJECT LOGO -->
-<br />
+# clash auto-selector plus
+### 描述
+通过clash-api 实现的节点自动选择器
 
-<p align="center">
-  <a href="https://github.com/keai336/casher/">
-    <img src="logo.png" alt="Logo" width="80" height="80">
-  </a>
+### 有什么用?
+通过评价各个节点,结合组的偏好,切换到最优节点.
 
-  <h3 align="center">casher</h3>
-  <p align="center">
-    一只全职casher的猫,遵照boss的心意
-    <br />
-    <a href="https://github.com/keai336/casher"><strong>探索本项目的文档 »</strong></a>
-    <br />
-    <br />
-    <a href="https://github.com/keai336/casher">查看Demo</a>
-    ·
-    <a href="https://github.com/keai336/casher/issues">报告Bug</a>
-    ·
-    <a href="https://github.com/keai336/casher/issues">提出新特性</a>
-  </p>
+### 执行流程
+![流程图.png](流程图.png)
+1.provider 更新自己的状态
 
-</p>
- 
-## 目录
+2.proxies 更新自己的状态
 
-- [上手指南](#上手指南)
-  - [安装步骤](#安装步骤)
-- [文件目录说明](#文件目录说明)
-- [部署](#部署)
-- [使用到的框架](#使用到的框架)
-- [版本控制](#版本控制)
-- [作者](#作者)
-- [鸣谢](#鸣谢)
+3.provider通过评价体系给proxy评分
 
-### 上手指南
-1. 你需要的配置文件是有provider,而且组的proxies来自use关键字
-2. 原理就是通过api获取provider,通过provider获取proxy.
-3. group是对这些proxy的引用.
-4. 定时评价,provider对所有proxy测速,然后评分;到组内根据group的偏好进行二次评分,然后切换到最适合的proxy
-5. 评价是基于proxy的延迟,provider,还有标签计算的.
-6. 组内评价时,会遍历proxy的mark,如果mark在group的grouplabeldic里,获得对应值的加成,大于1的值都是正向加成.如果group的grouplabeldic有流媒体相关的标签,还会检查其连通性,这是单独的评价,通过流通性检查的proxy分数也会有加成
-7. 详细看config.yaml里的标注
-8. 流程图 ![流程图](流程图.png)
-###### **安装步骤**
-1. 自己编译或者下载release中的
-2. 第一次运行直接运行;后续运行可以指定配置文件路径
-- 注意
-  - 配置示例![实例](示例.png)
-### 文件目录说明
-eg:
+4.group 通过评价体系和偏好对proxy评分
+
+5.group选择评价后的最优proxy
+
+
+
+#### 评价体系 (目前)
+- 延迟(provider侧)
+  - 平均延迟
+  - 本次延迟
+  - 延迟波动
+- 解锁(group侧)
+  - 各种流媒体
+
+### 配置文件
+#### 节点的标签🏷
+
+自行给节点打的标签
+组的偏好是相对于标签的
+```
+proxymark:
+    "节点名":
+        - 标签
+        - ...
+    "日本-优化-GPT-0.2x:
+        - 日本
+        - GPT
+        - 低倍率
+        
+```
+#### 组的偏好💓
 
 ```
-filetree 
-<<<<<<< HEAD
-│  blacklist
-│  cahser_test.go
-│  casher.go
-│  config.yaml
-│  dash
-│  dash.exe
-│  first_test.go
-│  go.mod
-│  go.sum
-│  logo.png
-│  main.go
-│  README.md
-│  README0.md
-│  test.yaml
-│  time_test.go
-│  示例.png
-│
-├─config
-│      config.go
-│      config_test.go
-│      test.yaml
-│
-├─grade
-│      funcs.go
-│      func_test.go
-│      gradegroup.go
-│      gradeprovider.go
-│      gradeproxy.go
-│      lockcheck.go
-│      mysql.go
-│
-├─plus
-│      delay.go
-│      delay_test.go
-│      group.go
-│      provider.go
-│
-└─user
-        funcs_test.go
+grouplabeldic:
+    Final:
+        低倍率: 5
+        飞舞结点: 0.01
+        香港: 2.3
+        高倍率: 0.3
+    美国:
+        Chatgpt: 3
+        Spotify: 3
+        飞舞结点: 0.01
+        高倍率: 0.3
 ```
+上面的规则意思是 
+- Final组对有 低倍率和香港 标签的节点更偏好,这些节点有较普通节点高的优先级; 对 飞舞节点和高倍率 排斥,这些节点有较普通节点低的优先级.
 
+- 美国组的两个流媒体标签是特殊的,它们先加成,然后再通过检测解锁状态二次加成.意思就是 更偏好有这些流媒体标签的节点,更更偏好有流媒体标签而且解锁正常的节点.
 
+### 实现
+- 透过clash api
 
-### 部署
+### 怎么用?
 
-暂无
+- 下载released 文件
 
-### 使用到的框架
+- 第一次执行,无配置文件,通过终端提示,完善基础信息,会自动生成一个模板 config.yaml
+- 有配置文件 可以指定配置文件路径. `dash 路径`
+
+### bugs
+- 似乎有goroutine泄露
+
+### 感谢
 
 - [nkeonkeo/MediaUnlockTest](https://github.com/nkeonkeo/MediaUnlockTest)
 - [obgnail/clash-api](https://github.com/obgnail/clash-api)
-
-
-
-
-### 版本控制
-
-该项目使用Git进行版本管理。您可以在repository参看当前可用版本。
-
-### 作者
-
-keai
- 
-
- *您也可以在贡献者名单中参看所有参与该项目的开发者。*
-
-
-### 鸣谢
-
-
-- [nkeonkeo/MediaUnlockTest](https://github.com/nkeonkeo/MediaUnlockTest)
-- [obgnail/clash-api](https://github.com/obgnail/clash-api)
-
-
-
-

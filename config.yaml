@@ -1,35 +1,44 @@
-providerlevel:
+providerlevel:  # 身世加成
     mesl: 1
     planb: 1
     planc: 1.3
-grouplabeldic:
-    # 意思是Final组有低倍率的节点优先 飞舞节点是负向的,多个标签满足会进行综合评价.
+grouplabeldic:  #组的偏好
     Final:
         低倍率: 5
         飞舞结点: 0.01
         香港: 2.3
         高倍率: 0.3
     美国:
-        Chatgpt: 3 #会进行连通性检查, 通过会加分的 ,详细请看 lockcheck.go里的dic
-        Spotify: 3 #同样
+        Chatgpt: 3
+        Spotify: 3
         飞舞结点: 0.01
         高倍率: 0.3
-proxymark:
+proxymark:  #节点标签
     "\U0001F1E6\U0001F1F7 Argentina":
         - 阿根廷
     "\U0001F1E6\U0001F1F7 Argentina | 冷门":
         - 阿根廷
+    "\U0001F1E6\U0001F1FA AU1 Exetel":
+        - 澳大利亚
+    "\U0001F1E6\U0001F1FA AU2 AWS":
+        - 萨摩亚
+    "\U0001F1E6\U0001F1FA AU3 Oracle":
+        - 澳大利亚
     "\U0001F1E6\U0001F1FA Australia1 Exetel":
         - 澳大利亚
     "\U0001F1E6\U0001F1FA Australia2 AWS":
         - 澳大利亚
     "\U0001F1E6\U0001F1FA Australia3 Oracle":
         - 澳大利亚
+    "\U0001F1E7\U0001F1F4 Bolivia":
+        - 玻利维亚
     "\U0001F1E7\U0001F1F7 Brazil":
         - 巴西
     "\U0001F1E8\U0001F1E6 CA1 AWS":
         - 加拿大
     "\U0001F1E8\U0001F1E6 CA2 Google":
+        - 加拿大
+    "\U0001F1E8\U0001F1E6 CA2 Rogers [3X]":
         - 加拿大
     "\U0001F1E8\U0001F1ED Switzerland":
         - 瑞士
@@ -46,6 +55,8 @@ proxymark:
         - 台湾
     "\U0001F1E8\U0001F1F3 TW3 Akari":
         - 台湾
+    "\U0001F1E8\U0001F1F3 TW4 Nimbus":
+        - 台湾
     "\U0001F1E8\U0001F1F3 TW4 TFN":
         - 台湾
     "\U0001F1E8\U0001F1F3 TW5 404":
@@ -53,6 +64,8 @@ proxymark:
     "\U0001F1E8\U0001F1F3 TW6 Akari [UDPN 3X]":
         - 台湾
     "\U0001F1E8\U0001F1F3 TW6 PQS":
+        - 台湾
+    "\U0001F1E8\U0001F1F3 TW6 TFN":
         - 台湾
     "\U0001F1E8\U0001F1F3 TW7 Akari [UDPN 3X]":
         - 高倍率
@@ -62,6 +75,8 @@ proxymark:
     "\U0001F1E8\U0001F1F3 TW8 404 [UDPN 3X]":
         - 台湾
     "\U0001F1E8\U0001F1F3 TW8 Google [UDPN 3X]":
+        - 台湾
+    "\U0001F1E8\U0001F1F3 TW8 Nimbus [UDPN 3X]":
         - 台湾
     "\U0001F1E8\U0001F1F3 TW8 TFN [UDPN 3X]":
         - 高倍率
@@ -81,6 +96,10 @@ proxymark:
         - 台湾
     "\U0001F1E8\U0001F1F3 TW11 Hinet [Aliyun 3X]":
         - 台湾
+    "\U0001F1E8\U0001F1F3 TW11 TFN [UDPN 3X]":
+        - 台湾
+    "\U0001F1E8\U0001F1F3 TW12 Apol [UDPN 3X]":
+        - 台湾
     "\U0001F1E8\U0001F1F3 TW12 PQS [UDPN 3X]":
         - 高倍率
         - 台湾
@@ -97,19 +116,27 @@ proxymark:
         - 德国
     "\U0001F1E9\U0001F1EA DE2 Cloudflare":
         - 德国
+    "\U0001F1E9\U0001F1EA DE3 Dokom21":
+        - 德国
     "\U0001F1E9\U0001F1EA DE3 Google":
         - 德国
     "\U0001F1E9\U0001F1EA DE4 AWS":
+        - 德国
+    "\U0001F1E9\U0001F1EA DE5 Vodafone [3X]":
         - 德国
     "\U0001F1E9\U0001F1F0 Denmark":
         - 丹麦
     "\U0001F1EA\U0001F1EC Egypt":
         - 埃及
+    "\U0001F1EA\U0001F1F8 Spain":
+        - 西班牙
     "\U0001F1EB\U0001F1EE Finland":
         - 芬兰
     "\U0001F1EB\U0001F1F7 FR1 Webconex":
         - 法国
     "\U0001F1EB\U0001F1F7 FR2 Feelb":
+        - 法国
+    "\U0001F1EB\U0001F1F7 FR3 Bouygues [3X]":
         - 法国
     "\U0001F1EB\U0001F1F7 FR3 Google":
         - 法国
@@ -120,6 +147,10 @@ proxymark:
     "\U0001F1EC\U0001F1E7 UK3 Cloudflare":
         - 英国
     "\U0001F1EC\U0001F1E7 UK4 Google":
+        - 英国
+    "\U0001F1EC\U0001F1E7 UK4 Virgin":
+        - 英国
+    "\U0001F1EC\U0001F1E7 UK5 BT":
         - 英国
     "\U0001F1EC\U0001F1E7 UK5 Virgin":
         - 英国
@@ -192,6 +223,8 @@ proxymark:
     "\U0001F1ED\U0001F1F0 HK18 Eons [UDPN 3X]":
         - 高倍率
         - 香港
+    "\U0001F1ED\U0001F1F0 HK18 Misaka [Aliyun 3X]":
+        - 香港
     "\U0001F1ED\U0001F1F0 Hong Kong | 家宽 3.0x":
         - 高倍率
         - 香港
@@ -218,6 +251,10 @@ proxymark:
         - 印度尼西亚
     "\U0001F1EE\U0001F1F1 Israel":
         - 以色列
+    "\U0001F1EE\U0001F1F3 IN1 AWS":
+        - 萨摩亚
+    "\U0001F1EE\U0001F1F3 IN2 Consam":
+        - 印度
     "\U0001F1EE\U0001F1F3 India":
         - 印度
     "\U0001F1EF\U0001F1F5 JP1 Gcore [0.2X]":
@@ -250,6 +287,8 @@ proxymark:
         - 日本
     "\U0001F1EF\U0001F1F5 JP13 SoNet [UDPN 3X]":
         - 高倍率
+        - 日本
+    "\U0001F1EF\U0001F1F5 JP14 Biglobe [UDPN 3X]":
         - 日本
     "\U0001F1EF\U0001F1F5 Japan | 日用 0.2x":
         - 低倍率
@@ -284,11 +323,17 @@ proxymark:
         - 韩国
     "\U0001F1F0\U0001F1F7 KR4 LG":
         - 韩国
+    "\U0001F1F0\U0001F1F7 KR5 KT [UDPN 3X]":
+        - 韩国
     "\U0001F1F0\U0001F1F7 KR5 Moack [UDPN 3X]":
         - 高倍率
         - 韩国
+    "\U0001F1F0\U0001F1F7 KR6 Moack [UDPN 3X]":
+        - 韩国
     "\U0001F1F0\U0001F1F7 KR6 SK [UDPN 3X]":
         - 高倍率
+        - 韩国
+    "\U0001F1F0\U0001F1F7 KR7 SK [UDPN 3X]":
         - 韩国
     "\U0001F1F0\U0001F1F7 KR7 Ucloud [UDPN 3X]":
         - 高倍率
@@ -296,11 +341,21 @@ proxymark:
     "\U0001F1F0\U0001F1F7 KR8 AWS [UDPN 3X]":
         - 高倍率
         - 韩国
+    "\U0001F1F0\U0001F1F7 KR8 Ucloud [UDPN 3X]":
+        - 韩国
+    "\U0001F1F0\U0001F1F7 KR9 AWS [UDPN 3X]":
+        - 韩国
+    "\U0001F1F0\U0001F1F7 KR10 LG":
+        - 韩国
     "\U0001F1F0\U0001F1F7 South Korea | 家宽 3.0x":
         - 高倍率
         - 韩国
     "\U0001F1F2\U0001F1FD Mexico":
         - 墨西哥
+    "\U0001F1F2\U0001F1FE MY1 Gbnetwork":
+        - 马来西亚
+    "\U0001F1F2\U0001F1FE MY2 TM":
+        - 马来西亚
     "\U0001F1F2\U0001F1FE Malaysia | 冷门":
         - 马来西亚
     "\U0001F1F2\U0001F1FE Malaysia1":
@@ -322,6 +377,10 @@ proxymark:
         - 新西兰
     "\U0001F1F5\U0001F1EA Peru":
         - 秘鲁
+    "\U0001F1F5\U0001F1ED PH1 Aliyun":
+        - 菲律宾
+    "\U0001F1F5\U0001F1ED PH2 Eastern [2X]":
+        - 菲律宾
     "\U0001F1F5\U0001F1ED Philippines1":
         - 菲律宾
     "\U0001F1F5\U0001F1ED Philippines2 [2X]":
@@ -371,6 +430,8 @@ proxymark:
     "\U0001F1F8\U0001F1EC SG11 M1 [UDPN 3X]":
         - 高倍率
         - 新加坡
+    "\U0001F1F8\U0001F1EC SG12 AWS [Aliyun 3X]":
+        - 新加坡
     "\U0001F1F8\U0001F1EC Singapore | 劫持":
         - 新加坡
     "\U0001F1F8\U0001F1EC Singapore | 日用 0.2x":
@@ -392,6 +453,10 @@ proxymark:
         - 新加坡
     "\U0001F1F8\U0001F1EC Singapore 08":
         - 新加坡
+    "\U0001F1F9\U0001F1ED TH1 CAT":
+        - 加拿大
+    "\U0001F1F9\U0001F1ED TH2 Bangmod":
+        - 泰国
     "\U0001F1F9\U0001F1ED Thailand1 CAT":
         - 泰国
     "\U0001F1F9\U0001F1ED Thailand2 Bangmod":
@@ -462,6 +527,8 @@ proxymark:
         - 美国
         - Chatgpt
         - Spotify
+    "\U0001F1FA\U0001F1F8 US15 Misaka [UDPN 5X]":
+        - 美国
     "\U0001F1FA\U0001F1F8 United States | 家宽 3.0x":
         - 高倍率
         - 美国
@@ -592,7 +659,7 @@ proxymark:
         - 香港
     香港wap-T:
         - 香港
-groupleveldic:
+groupleveldic: # 类似身世加成,,但是没启用.不管他先
     EMBY: 1
     Final: 1
     GLOBAL: 1
@@ -606,7 +673,7 @@ groupleveldic:
     英国: 1
     韩国: 1
     香港: 1
-interval: 300
-timeout: 1200
-url: http://10.18.18.31:9090
-secret: D1u5ETt5
+interval: 300  #循环间隔 s
+timeout: 1200  # 延迟检测的超时 ms
+url: http://10.18.18.31:9090 # 请求地址
+secret: D1u5ETt5 # 密码
