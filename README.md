@@ -9,7 +9,7 @@
 
   <h3 align="center">casher</h3>
   <p align="center">
-    一只兼职casher的猫,遵照boss的心意
+    一只全职casher的猫,遵照boss的心意
     <br />
     <a href="https://github.com/keai336/casher"><strong>探索本项目的文档 »</strong></a>
     <br />
