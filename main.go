@@ -18,8 +18,12 @@ func main() {
 	casher := NewOneCasher(path)
 	go func() {
 		for {
+			//time.Sleep(2000)
+			//fmt.Println("总体更新前:", runtime.NumGoroutine())
 			casher.Update()
 			//fmt.Println(casher.Groups["美国"].Points)
+			//time.Sleep(2000)
+			//fmt.Println("总体更新后:", runtime.NumGoroutine())
 			time.Sleep(time.Duration(casher.Interval) * time.Second)
 		}
 

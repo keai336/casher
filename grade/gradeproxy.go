@@ -42,7 +42,7 @@ func (gradeproxy *GradeProxy) Update() {
 	gradeproxy.DelayNow = delay.Delay
 	gradeproxy.DelayHistory = append(gradeproxy.DelayHistory, gradeproxy.DelayNow)
 	if MysqlOn {
-		OneInsertHistory(gradeproxy)
+		//OneInsertHistory(gradeproxy)
 	}
 }
 func NewGradeProxy(proxy *clash.Proxy, marks []string) *GradeProxy {

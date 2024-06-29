@@ -8,12 +8,17 @@ import (
 )
 import lockcheck "github.com/keai336/MediaUnlockTest"
 
-var LockTestDic = map[string]func(client http.Client) lockcheck.Result{
-	"Spotify":   lockcheck.Spotify,
-	"Bilibili ": lockcheck.BilibiliTW,
-	"Youtube":   lockcheck.YoutubeRegion,
-	"Netflix":   lockcheck.NetflixRegion,
-	"Chatgpt":   lockcheck.ChatGPT,
+type CheckItem struct {
+	Keyword string
+	Check   func(client http.Client) lockcheck.Result
+}
+
+var LockTestDic = map[string]CheckItem{
+	"Spotify":   {Keyword: "Spotify", Check: lockcheck.Spotify},
+	"Bilibili ": {Keyword: "Bilibili", Check: lockcheck.BilibiliTW},
+	"Youtube":   {Keyword: "Youtube", Check: lockcheck.YoutubeRegion},
+	"Netflix":   {Keyword: "Netflix", Check: lockcheck.NetflixRegion},
+	"Chatgpt":   {Keyword: "openai", Check: lockcheck.ChatGPT},
 }
 
 var Checktimedout int = 2

@@ -1,10 +1,8 @@
 package plus
 
 import (
-	"fmt"
 	"github.com/juju/errors"
 	"github.com/obgnail/clash-api/clash"
-	"testing"
 )
 
 type Group struct {
@@ -43,33 +41,6 @@ func GetGroupMessage(name string) (*Group, error) {
 		return nil, errors.Trace(err)
 	}
 	return group, nil
-}
-
-func TestGroups(t *testing.T) {
-	clash.SetURL("http://10.18.18.31:9090")
-	clash.SetSecret("D1u5ETt5")
-	Groups, err := GetGroups()
-	fmt.Println(Groups)
-	if err != nil {
-		fmt.Println(err)
-
-	} else {
-
-		for k, _ := range Groups {
-			if k == "Final" {
-
-				group, _ := GetGroupMessage(k)
-				for _, v := range group.History {
-					println(v.Time, v.Delay, v.MeanDelay)
-				}
-			}
-		}
-	}
-	if message, err := GetGroupMessage("EMBY"); err != nil {
-		t.Log(11)
-	} else {
-		t.Log(message.All)
-	}
 }
 
 //func GetProxyMessage(name string) (*Proxy, error) {

@@ -41,8 +41,14 @@ func NewOneCasher(configpt string) *Casher {
 
 }
 func (casher *Casher) Update() {
+
 	grade.AllUpdate(casher.Providers)
+	//time.Sleep(10 * time.Second)
+	//fmt.Println("group更新前:", runtime.NumGoroutine())
 	grade.AllUpdate(casher.Groups)
+	//time.Sleep(10 * time.Second)
+	//fmt.Println("group更新后:", runtime.NumGoroutine())
+	//fmt.Println(time.Now())
 }
 
 func (casher *Casher) OffDuty() {

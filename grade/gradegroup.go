@@ -39,7 +39,12 @@ func NewGradeGroup(name string, level float64, labledic map[string]float64, sour
 	gradegroup.LabelDic = labledic
 	return gradegroup
 }
+func (group *GradeGroup) SwitchProxy(name string) {
+	clash.SwitchProxy(group.Name, name)
+	group.UpdateStu()
+	//fmt.Println(group.Name, group.Now)
 
+}
 func (gradegroup *GradeGroup) SetLabelDic(label string, value float64) {
 	gradegroup.LabelDic[label] = value
 }
@@ -97,13 +102,20 @@ func (gradegroup *GradeGroup) CheckLock() float64 {
 	var n, total int
 	var mu sync.Mutex
 	var wg sync.WaitGroup
-
+	//time.Sleep(10 * time.Second)
+	//fmt.Println("group更新前:", runtime.NumGoroutine())
 	for k := range gradegroup.LabelDic {
-		if checkfunc, ok := LockTestDic[k]; ok {
+		if checkitem, ok := LockTestDic[k]; ok {
 			wg.Add(1)
-			go func(cf func(r http.Client) lockcheck.Result) {
+			go func(cf CheckItem) {
 				defer wg.Done()
-				rs := checklock(cf)
+				if connections, err := plus.GetSpconnections(cf.Keyword); err != nil {
+					fmt.Println(err)
+				} else {
+					plus.Killspconnections(connections)
+
+				}
+				rs := checklock(cf.Check)
 				value := 0
 				if rs.Status != -1 {
 					value = 1
@@ -111,13 +123,14 @@ func (gradegroup *GradeGroup) CheckLock() float64 {
 				mu.Lock()
 				n += value
 				mu.Unlock()
-			}(checkfunc)
+			}(checkitem)
 			total++
 		}
 	}
 
 	wg.Wait()
-
+	//time.Sleep(10 * time.Second)
+	//fmt.Println("group更新后:", runtime.NumGoroutine())
 	if total == 0 {
 		return -1
 	}
@@ -149,8 +162,7 @@ func (gradegroup *GradeGroup) FindBest(unlock map[string]int) {
 	switch num := gradegroup.getlockchecknum(); num {
 	case 0:
 		name, _ := maxInMap(gradegroup.Points)
-		clash.SwitchProxy(gradegroup.Name, name)
-		gradegroup.UpdateStu()
+		gradegroup.SwitchProxy(name)
 		return
 	default:
 		nowuse := gradegroup.Now
@@ -180,20 +192,17 @@ func (gradegroup *GradeGroup) FindBest(unlock map[string]int) {
 			}
 			switch mark {
 			case 0:
-				clash.SwitchProxy(gradegroup.Name, next)
-				gradegroup.UpdateStu()
+				gradegroup.SwitchProxy(next)
 				gradegroup.FindBest(unlock)
 			case 1:
 				name, _ := maxInMap(unlock)
-				clash.SwitchProxy(gradegroup.Name, name)
-				gradegroup.UpdateStu()
+				gradegroup.SwitchProxy(name)
 				return
 
 			}
 		} else {
 			name, _ := maxInMap(unlock)
-			clash.SwitchProxy(gradegroup.Name, name)
-			gradegroup.UpdateStu()
+			gradegroup.SwitchProxy(name)
 			return
 		}
 
@@ -261,11 +270,11 @@ func (gradegroup *GradeGroup) ChangeIf() {
 		var newuse string
 		var newpoint int
 		var nowlockv float64
+
 		switch gradegroup.getlockchecknum() {
 		case 0:
 			name, _ := maxInMap(gradegroup.Points)
-			clash.SwitchProxy(gradegroup.Name, name)
-			gradegroup.UpdateStu()
+			gradegroup.SwitchProxy(name)
 			newuse = gradegroup.Now
 			newpoint = gradegroup.Points[newuse]
 			jmyt = 1.3
@@ -298,8 +307,7 @@ func (gradegroup *GradeGroup) ChangeIf() {
 				}
 
 			}
-			clash.SwitchProxy(gradegroup.Name, next)
-			gradegroup.UpdateStu()
+			gradegroup.SwitchProxy(next)
 			gradegroup.FindBest(lockdic)
 			nowpoint = lockdic[nowuse]
 			newuse = gradegroup.Now
@@ -317,8 +325,7 @@ func (gradegroup *GradeGroup) ChangeIf() {
 		if newpoint > int(float64(nowpoint)*jmyt) {
 			fmt.Println(time.Now().Format("2006-01-02 15:04:05"), "use", newuse, newpoint, "old", nowuse, nowpoint)
 		} else {
-			clash.SwitchProxy(gradegroup.Name, nowuse)
-			gradegroup.UpdateStu()
+			gradegroup.SwitchProxy(nowuse)
 		}
 
 	} else {
